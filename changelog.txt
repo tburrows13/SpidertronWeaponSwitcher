@@ -2,4 +2,4 @@
 Version: 1.0.0
 Date: 22 August 2020
   Features:
-    - Added optional setting to spawn each player with a spidertron remote configured to control their own Spidertron Engineer
+    - Spidertron can be rotated through 5 different weapon loadouts
