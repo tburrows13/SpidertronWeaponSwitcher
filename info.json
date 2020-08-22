@@ -1,0 +1,9 @@
+{
+    "name": "SpidertronWeaponSwitcher",
+    "version": "0.1.0",
+    "title": "Spidertron Weapon Switcher",
+    "author": "Xorimuth",
+    "description": "Build your factory as a Spidertron from the start! Instead of unlocking better weapons and armor, unlock upgrades to yourself.",
+    "factorio_version": "1.0",
+    "dependencies": ["base >= 1.0"]
+  }
