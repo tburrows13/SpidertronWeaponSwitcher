@@ -115,7 +115,7 @@ end
 
 local function place_stored_spidertron_data(spidertron, saved_data)
   -- Copy across equipment grid
-  log("Placing saved ammo_data back into spidertron: \n" .. serpent.block(saved_data))
+  --log("Placing saved ammo_data back into spidertron: \n" .. serpent.block(saved_data))
   local previous_grid_contents = saved_data.equipment
   if previous_grid_contents then
     local items_to_insert = {}
@@ -170,9 +170,9 @@ script.on_event("switch-spidertron-weapons",
     local player = game.get_player(event.player_index)
     log("Switching spidertron weapon")
     local spidertron
-    if player.selected and player.selected.type == "spider-vehicle" then
+    if player.selected and player.selected.type == "spider-vehicle" and string.sub(player.selected.name, 1, 15) == "spidertron-alt-" then
       spidertron = player.selected
-    elseif player.vehicle and player.vehicle.type == "spider-vehicle" then
+    elseif player.vehicle and player.vehicle.type == "spider-vehicle" and string.sub(player.vehicle.name, 1, 15) == "spidertron-alt-" then
       spidertron = player.vehicle
     else return
     end
@@ -198,6 +198,53 @@ script.on_event(defines.events.on_built_entity,
    {filter = "name", name = "spidertron-alt-5"}}
 )
 
+script.on_event(defines.events.on_pre_player_mined_item,
+  function(event)
+    local player = game.get_player(event.player_index)
+    local spidertron = event.entity
+    log("Player " .. player.name .. " mined spidertron")
+    -- Add the contents of the other weapons into the players inventory
+    local ammo_inventory = player.get_inventory(defines.inventory.character_ammo)
+    local main_inventory = player.get_main_inventory()
+
+    local all_ammo_transferred = true
+    log("Before mining: \n" .. serpent.block(global.spidertron_saved_data[spidertron.unit_number]))
+    for spidertron_name, ammo_stacks in pairs(global.spidertron_saved_data[spidertron.unit_number]) do
+      for item_name, item_count in pairs(ammo_stacks) do
+        player.print("Inserting " .. item_name .. item_count)
+        local inserted = ammo_inventory.insert({ name = item_name, count = item_count})
+        local inserted_into_main = 0
+        if inserted ~= item_count then
+          inserted_into_main = main_inventory.insert({ name = item_name, count = item_count - inserted})
+        end
+        if (inserted + inserted_into_main) ~= item_count then
+          log("No space in inventory for item " .. item_name)
+          -- There is no space in the inventory - save the progress that we made
+          ammo_stacks[item_name] = item_count - inserted - inserted_into_main
+          all_ammo_transferred = false
+        else 
+          ammo_stacks[item_name] = nil
+        end
+
+
+      --for name, count in pairs(previous_ammo) do
+      --  if ammo_inventory then ammo_inventory.insert({name=name, count=count})
+      --  else
+      --    player.surface.spill_item_stack(spidertron.position, {name=name, count=count})
+      --  end
+      --end
+      end
+    end
+    log("After mining: \n" .. serpent.block(global.spidertron_saved_data[spidertron.unit_number]))
+    if not all_ammo_transferred then log("Not all ammo transferred!") end
+  end,
+  {{filter = "name", name = "spidertron-alt-1"},
+   {filter = "name", name = "spidertron-alt-2"},
+   {filter = "name", name = "spidertron-alt-3"},
+   {filter = "name", name = "spidertron-alt-4"},
+   {filter = "name", name = "spidertron-alt-5"}}
+
+)
 
 script.on_init(
   function()
