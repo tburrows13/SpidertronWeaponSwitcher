@@ -23,6 +23,7 @@ Limitations
 Future Updates?
 -----
 
+- Fully tested and balanced compatability with other spidertron mods (e.g. [Spidertron Extended](https://mods.factorio.com/mod/spidertron-extended) and [Spidertron squad control](https://mods.factorio.com/mod/Spider_Control))
 - Please suggest modded weapons that should be added to the weapon rotation when using those mods
 
 -----

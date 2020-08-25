@@ -5,6 +5,8 @@ Date: 25 August 2020
     - Ammo from inactive weapon slots are now added to the player's inventory or spilled on the ground when a spidertron is picked up
     - Remotes in players' inventories or in a 30-tile radius around a player are kept connected to a spidertron when its weapon is switched
     - Added spidertron description
+  Bugfixes:
+    - Fixed crash when trying to switch weapons on other mods' spidertrons
 ---------------------------------------------------------------------------------------------------
 Version: 1.0.0
 Date: 22 August 2020
