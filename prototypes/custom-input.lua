@@ -3,7 +3,6 @@ data:extend({
     type = "custom-input",
     name = "switch-spidertron-weapons",
     key_sequence = "CONTROL + TAB",
-    --consuming = "game-only"
-  },
+    alternate_key_sequence = "\\",
+  }
 })
-log("Created spidertron weapon control")

@@ -1,4 +1,10 @@
-DEFAULT_COLORS = {{100, 100, 100}, {200, 200, 0}, {213, 0, 213}}
+--DEFAULT_COLORS = {{100, 100, 100}, {200, 200, 0}, {213, 0, 213}}
+MAP_ENTITY_INVENTORY = {["cargo-wagon"] = defines.inventory.cargo_wagon,
+                        ["container"] = defines.inventory.chest,
+                        ["car"] = defines.inventory.car_trunk,
+                        ["character"] = defines.inventory.character_main,
+                        ["logistic-container"] = defines.inventory.chest,
+                        ["spider-vehicle"] = defines.inventory.car_trunk}
 
 local function contains(array, element, remove)
   for i, value in pairs(array) do
@@ -16,15 +22,13 @@ local function get_next_name(name)
 end
 
 
-local function get_remote(player, not_connected)
-  local spidertron = global.spidertrons[player.index]
-  local inventory = player.get_main_inventory()
+local function get_remotes(inventory, spidertron, found_remotes, not_connected)
   if spidertron then
     for i = 1, #inventory do
       local item = inventory[i]
       if item.valid_for_read then  -- Check if it isn't an empty inventory slot
         if item.connected_entity == spidertron then
-          return item
+          table.insert(found_remotes, item)
         end
         if not_connected and item.prototype.type == "spidertron-remote" and not item.connected_entity then
           return item
@@ -108,8 +112,31 @@ local function store_spidertron_data(spidertron)
 
   local auto_target = spidertron.vehicle_automatic_targeting_parameters
 
+
+  -- Find all connected remotes
+  local connected_remotes = {}
+  --for _, entity in pairs(surface.find_entities_filtered{type=types}) do
+  for _, found_player in pairs(game.players) do
+    get_remotes(found_player.get_inventory(defines.inventory.character_main), spidertron, connected_remotes)  -- Adds all remotes connected to spidertron to connected_remotes
+    get_remotes(found_player.get_inventory(defines.inventory.character_trash), spidertron, connected_remotes)
+
+    -- Also check in a radius around the player
+    if found_player.character then
+      local character = found_player.character
+      -- Check train cars, chests, cars, player inventories, and logistics chests.
+      local types = {"cargo-wagon", "container", "car", "logistic-container", "spider-vehicle"}
+      for _, entity in pairs(character.surface.find_entities_filtered{position=character.position, radius=30, type=types}) do
+        if entity.get_item_count("spidertron-remote") > 0 then
+          log("Found remotes in entity " .. entity.name .. ". Checking inventory " .. MAP_ENTITY_INVENTORY[entity.type])
+          get_remotes(entity.get_inventory(MAP_ENTITY_INVENTORY[entity.type]), spidertron, connected_remotes)  -- Adds all remotes connected to spidertron to connected_remotes
+        end
+      end
+    end
+  end
+
+
   --global.spidertron_saved_data[player.index] = {index = player.index, equipment = grid_contents, ammo = ammo, trunk = trunk, color = color}
-  return {index = spidertron.unit_number, equipment = grid_contents, trunk = trunk, color = color, auto_target = auto_target, player = player}
+  return {index = spidertron.unit_number, equipment = grid_contents, trunk = trunk, color = color, auto_target = auto_target, player = player, connected_remotes = connected_remotes}
 end
 
 
@@ -150,9 +177,9 @@ local function place_stored_spidertron_data(spidertron, saved_data)
 
   -- Only set the color if it wasn't already a default color
   local color = saved_data.color
-  if not contains(DEFAULT_COLORS, color) then
-    spidertron.color = color
-  end
+  --if not contains(DEFAULT_COLORS, color) then
+  spidertron.color = color
+  --end
 
   local auto_target = saved_data.auto_target
   if auto_target then
@@ -162,6 +189,18 @@ local function place_stored_spidertron_data(spidertron, saved_data)
   local player = saved_data.player
   if player then
     spidertron.set_driver(player)
+  end
+
+  -- Reconnect remotes
+  for _, remote in pairs(saved_data.connected_remotes) do
+    if not remote.valid then
+      -- Remote must have been in the spidertron
+      remote = get_remotes(trunk_inventory, spidertron, {}, true)
+      log("Found not connected remote in spidertron inventory")
+    end
+    if remote then
+      remote.connected_entity = spidertron
+    end
   end
 end
 
@@ -195,7 +234,11 @@ script.on_event(defines.events.on_built_entity,
    {filter = "name", name = "spidertron-alt-2"},
    {filter = "name", name = "spidertron-alt-3"},
    {filter = "name", name = "spidertron-alt-4"},
-   {filter = "name", name = "spidertron-alt-5"}}
+   {filter = "name", name = "spidertron-alt-5"},
+   {filter = "name", name = "spidertron-alt-6"},
+   {filter = "name", name = "spidertron-alt-7"},
+   {filter = "name", name = "spidertron-alt-8"},
+   {filter = "name", name = "spidertron-alt-9"}}
 )
 
 script.on_event(defines.events.on_player_mined_entity,
@@ -215,8 +258,11 @@ script.on_event(defines.events.on_player_mined_entity,
    {filter = "name", name = "spidertron-alt-2"},
    {filter = "name", name = "spidertron-alt-3"},
    {filter = "name", name = "spidertron-alt-4"},
-   {filter = "name", name = "spidertron-alt-5"}}
-
+   {filter = "name", name = "spidertron-alt-5"},
+   {filter = "name", name = "spidertron-alt-6"},
+   {filter = "name", name = "spidertron-alt-7"},
+   {filter = "name", name = "spidertron-alt-8"},
+   {filter = "name", name = "spidertron-alt-9"}}
 )
 
 script.on_init(

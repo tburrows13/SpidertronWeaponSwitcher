@@ -1,4 +1,4 @@
-local spidertron = data.raw["spider-vehicle"]["spidertron"]
+local spidertron = table.deepcopy(data.raw["spider-vehicle"]["spidertron"])
 spidertron.fast_replaceable_group = "spidertron-switcher"
 
 
