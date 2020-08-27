@@ -111,7 +111,7 @@ local function store_spidertron_data(spidertron)
   local color = spidertron.color
 
   local auto_target = spidertron.vehicle_automatic_targeting_parameters
-
+  local autopilot_destination = spidertron.autopilot_destination
 
   -- Find all connected remotes
   local connected_remotes = {}
@@ -119,6 +119,8 @@ local function store_spidertron_data(spidertron)
   for _, found_player in pairs(game.players) do
     get_remotes(found_player.get_inventory(defines.inventory.character_main), spidertron, connected_remotes)  -- Adds all remotes connected to spidertron to connected_remotes
     get_remotes(found_player.get_inventory(defines.inventory.character_trash), spidertron, connected_remotes)
+    get_remotes({found_player.cursor_stack}, spidertron, connected_remotes)
+
 
     -- Also check in a radius around the player
     if found_player.character then
@@ -136,7 +138,7 @@ local function store_spidertron_data(spidertron)
 
 
   --global.spidertron_saved_data[player.index] = {index = player.index, equipment = grid_contents, ammo = ammo, trunk = trunk, color = color}
-  return {index = spidertron.unit_number, equipment = grid_contents, trunk = trunk, color = color, auto_target = auto_target, player = player, connected_remotes = connected_remotes}
+  return {index = spidertron.unit_number, equipment = grid_contents, trunk = trunk, color = color, auto_target = auto_target, autopilot_destination = autopilot_destination, player = player, connected_remotes = connected_remotes}
 end
 
 
@@ -150,7 +152,7 @@ local function place_stored_spidertron_data(spidertron, saved_data)
       if spidertron.grid then
         local placed_equipment = spidertron.grid.put( {name=equipment.name, position=equipment.position} )
         if equipment.energy then placed_equipment.energy = equipment.energy end
-        if equipment.shield and equipment.shield > 0 then log("Shield restored") placed_equipment.shield = equipment.shield end
+        if equipment.shield and equipment.shield > 0 then placed_equipment.shield = equipment.shield end
       else 
         spidertron.surface.spill_item_stack(spidertron.position, {name=equipment.name})
       end
@@ -184,6 +186,11 @@ local function place_stored_spidertron_data(spidertron, saved_data)
   local auto_target = saved_data.auto_target
   if auto_target then
     spidertron.vehicle_automatic_targeting_parameters = auto_target
+  end
+
+  local autopilot_destination = saved_data.autopilot_destination
+  if autopilot_destination then
+    spidertron.autopilot_destination = autopilot_destination
   end
 
   local player = saved_data.player

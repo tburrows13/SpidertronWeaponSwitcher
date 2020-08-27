@@ -1,4 +1,12 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.1.1
+Date: 27 August 2020
+  Changes:
+    - New thumbnail
+    - Autopilot destination (from a remote) is now kept during weapon switching
+  Bugfixes:
+    - Fixed that remote in hand would be disconnected after weapon switch
+---------------------------------------------------------------------------------------------------
 Version: 1.1.0
 Date: 25 August 2020
   Features:

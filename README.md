@@ -3,6 +3,8 @@ Spidertron Weapon Switcher
 
 If you've been wanting the spidertron to fire more than just rockets, this is the mod for you! It now contains machine guns, shotguns, flamethrowers, cannons and rocket launchers.
 
+![Demonstration gif](https://i.imgur.com/hdvItFc.gif)
+
 -----
 Features
 -----
