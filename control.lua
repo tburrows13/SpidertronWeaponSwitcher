@@ -25,7 +25,7 @@ end
 
 
 local function get_remotes(inventory, spidertron, found_remotes, not_connected)
-  if spidertron then
+  if spidertron and inventory then
     for i = 1, #inventory do
       local item = inventory[i]
       if item.valid_for_read then  -- Check if it isn't an empty inventory slot
@@ -40,6 +40,45 @@ local function get_remotes(inventory, spidertron, found_remotes, not_connected)
   end
 end
 
+local function copy_inventory(old_inventory, inventory, filter_table)
+  if not inventory then
+    inventory = game.create_inventory(#old_inventory)
+  end
+
+  -- Assumes that old_inventory and inventory are not both filterable
+  local store_filters = false
+  local load_filters = false
+  if not filter_table and old_inventory.is_filtered() and not inventory.supports_filters() then
+    store_filters = true
+    filter_table = {}
+  elseif filter_table and inventory.supports_filters() then
+    load_filters = true
+  end
+
+  local newsize = #inventory
+  for i = 1, #old_inventory do
+    if i <= newsize then
+      inventory[i].transfer_stack(old_inventory[i])
+      --[[ Doesn't work - requires https://forums.factorio.com/viewtopic.php?f=28&t=89674
+      if old_inventory.supports_filters() and inventory.supports_filters() then
+        local filter = old_inventory.get_filter(i)
+        if filter then
+          inventory.set_filter(i, filter)
+        end
+      end
+      ]]
+      if store_filters then
+        filter_table[i] = old_inventory.get_filter(i)
+      end
+      if load_filters then
+        inventory.set_filter(i, filter_table[i])
+      end
+    end
+  end
+  return {inventory = inventory, filters = filter_table}
+end
+
+
 local function replace_spidertron(previous_spidertron)
   --local previous_spidertron = global.spidertrons[player.index]
   local ammo_data = global.spidertron_saved_data[previous_spidertron.unit_number]
@@ -50,7 +89,7 @@ local function replace_spidertron(previous_spidertron)
   global.spidertron_saved_data[previous_spidertron.unit_number] = {}
 
   -- Save previous_spidertron ammo
-  local ammo = previous_spidertron.get_inventory(defines.inventory.car_ammo).get_contents()
+  local ammo = copy_inventory(previous_spidertron.get_inventory(defines.inventory.car_ammo)).inventory
   ammo_data[previous_spidertron.name] = ammo
   -- Save
   --log("Upgrading spidertron to level " .. name .. " for player " .. player.name)
@@ -75,13 +114,8 @@ local function replace_spidertron(previous_spidertron)
   -- Copy across ammo
   local previous_ammo = ammo_data[spidertron.name]
   if previous_ammo then
-    local ammo_inventory = spidertron.get_inventory(defines.inventory.car_ammo)
-    for item_name, count in pairs(previous_ammo) do
-      if ammo_inventory then ammo_inventory.insert({name=item_name, count=count})
-      else
-        spidertron.surface.spill_item_stack(spidertron.position, {name=item_name, count=count})
-      end
-    end
+    copy_inventory(previous_ammo, spidertron.get_inventory(defines.inventory.car_ammo))
+    previous_ammo.destroy()
     ammo_data[spidertron.name] = nil  -- Now that we have retrieved the ammo_data, delete it from storage
   end
 
@@ -108,11 +142,19 @@ local function store_spidertron_data(spidertron)
   local grid_contents = {}
   if spidertron.grid then
     for _, equipment in pairs(spidertron.grid.equipment) do
-      table.insert(grid_contents, {name=equipment.name, position=equipment.position, energy=equipment.energy, shield=equipment.shield})
+      local equipment_data = {name=equipment.name, position=equipment.position, energy=equipment.energy, shield=equipment.shield, burner=equipment.burner}
+      if equipment.burner then  -- e.g. BurnerGenerator mod
+        equipment_data.burner_inventory = copy_inventory(equipment.burner.inventory).inventory
+        equipment_data.burner_burnt_result_inventory = copy_inventory(equipment.burner.burnt_result_inventory).inventory
+        equipment_data.burner_burner_heat = equipment.burner.heat
+        equipment_data.burner_currently_burning = equipment.burner.currently_burning
+        equipment_data.burner_remaining_burning_fuel = equipment.burner.remaining_burning_fuel
+      end
+      table.insert(grid_contents, equipment_data)
     end
   end
-  --local ammo = spidertron.get_inventory(defines.inventory.car_ammo).get_contents()
-  local trunk = spidertron.get_inventory(defines.inventory.car_trunk).get_contents()
+
+  local trunk = copy_inventory(spidertron.get_inventory(defines.inventory.car_trunk))
 
   local color = spidertron.color
 
@@ -125,6 +167,8 @@ local function store_spidertron_data(spidertron)
   for _, found_player in pairs(game.players) do
     get_remotes(found_player.get_inventory(defines.inventory.character_main), spidertron, connected_remotes)  -- Adds all remotes connected to spidertron to connected_remotes
     get_remotes(found_player.get_inventory(defines.inventory.character_trash), spidertron, connected_remotes)
+    get_remotes(found_player.get_inventory(defines.inventory.god_main), spidertron, connected_remotes)
+    get_remotes(found_player.get_inventory(defines.inventory.editor_main), spidertron, connected_remotes)
     get_remotes({found_player.cursor_stack}, spidertron, connected_remotes)
 
 
@@ -157,23 +201,29 @@ local function place_stored_spidertron_data(spidertron, saved_data)
     for _, equipment in pairs(previous_grid_contents) do
       if spidertron.grid then
         local placed_equipment = spidertron.grid.put( {name=equipment.name, position=equipment.position} )
-        if equipment.energy then placed_equipment.energy = equipment.energy end
-        if equipment.shield and equipment.shield > 0 then placed_equipment.shield = equipment.shield end
-      else 
-        spidertron.surface.spill_item_stack(spidertron.position, {name=equipment.name})
+        if placed_equipment then
+          if equipment.energy then placed_equipment.energy = equipment.energy end
+          if equipment.shield and equipment.shield > 0 then placed_equipment.shield = equipment.shield end
+          if equipment.burner then
+            copy_inventory(equipment.burner_inventory, placed_equipment.burner.inventory)
+            copy_inventory(equipment.burner_burnt_result_inventory, placed_equipment.burner.burnt_result_inventory)
+            if equipment.heat then placed_equipment.burner.heat = equipment.burner_heat end
+            placed_equipment.burner.currently_burning = equipment.burner_currently_burning
+            placed_equipment.burner.remaining_burning_fuel = equipment.burner_remaining_burning_fuel
+          end
+        else  -- No space in the grid because we have moved to a smaller grid
+          player.surface.spill_item_stack(spidertron.position, {name=equipment.name})
+        end
+      else  -- No space in the grid because we have 'upgraded' to no grid
+        player.surface.spill_item_stack(spidertron.position, {name=equipment.name})
       end
     end
   end
 
   -- Copy across trunk
-  local previous_trunk = saved_data.trunk
   local trunk_inventory = spidertron.get_inventory(defines.inventory.car_trunk)
-  for name, count in pairs(previous_trunk) do
-    if trunk_inventory then trunk_inventory.insert({name=name, count=count})
-    else
-      spidertron.surface.spill_item_stack(spidertron.position, {name=name, count=count})
-    end
-  end
+  copy_inventory(saved_data.trunk.inventory, trunk_inventory, saved_data.trunk.filters)
+  saved_data.trunk.inventory.destroy()
 
   -- Make player's remote point to new spidertron
   --[[ocal remote = get_remote(player, true)

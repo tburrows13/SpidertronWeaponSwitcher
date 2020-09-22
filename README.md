@@ -18,7 +18,6 @@ Features
 Limitations
 -----
 
-- When you switch weapons, any items inside that spidertron's inventory will lose all associated data. *Do not store modular/power armor in a spidertron. The equipment inside of them will be lost when you switch weapons*.
 - When you switch weapons, that spidertron's name will be lost, it will stop moving, and any remotes connected to it that are stored in an inventory more than 30 tiles from a player will become disconnected
 
 -----
