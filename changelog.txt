@@ -1,8 +1,7 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.1.2
-Date: ?????
+Date: 23 September 2020
   Features:
-    - [new remote interface. no way to call it yet]
     - Support for Spidertron Extended: MK2 and MK3 can now have their weapons switched, and all their weapons have increased range
   Changes:
     - Trunk, ammo and equipment grid are now kept perfectly when a spidertron is switched

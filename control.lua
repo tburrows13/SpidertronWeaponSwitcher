@@ -8,7 +8,7 @@ MAP_ENTITY_INVENTORY = {["cargo-wagon"] = defines.inventory.cargo_wagon,
                         ["logistic-container"] = defines.inventory.chest,
                         ["spider-vehicle"] = defines.inventory.car_trunk}
 
-on_spidertron_upgraded = script.generate_event_name()
+--on_spidertron_upgraded = script.generate_event_name() Coming in future update
 SWITCH_CHAINS = {
 {
   "sws-spidertron-spidertron-machine-gun",
@@ -139,13 +139,13 @@ local function replace_spidertron(previous_spidertron, name)
   global.spidertron_saved_data[spidertron.unit_number] = ammo_data
 
   -- Raise event so that other mods can handle the change
-  script.raise_event(on_spidertron_upgraded, {old_spidertron = previous_spidertron, new_spidertron = spidertron})
+  --script.raise_event(on_spidertron_upgraded, {old_spidertron = previous_spidertron, new_spidertron = spidertron})
 
   previous_spidertron.destroy()
   return spidertron
 end
 
-script.on_event(on_spidertron_upgraded, function(event) log("Upgraded spidertron: " .. event.old_spidertron.unit_number .. ", " .. event.new_spidertron.unit_number)end)
+--script.on_event(on_spidertron_upgraded, function(event) log("Upgraded spidertron: " .. event.old_spidertron.unit_number .. ", " .. event.new_spidertron.unit_number)end)
 
 local function store_spidertron_data(spidertron)
   -- Eject player if any
