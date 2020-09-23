@@ -3,6 +3,7 @@ Version: 1.1.2
 Date: ?????
   Features:
     - [new remote interface. no way to call it yet]
+    - Support for Spidertron Extended: MK2 and MK3 can now have their weapons switched, and all their weapons have increased range
   Changes:
     - Trunk, ammo and equipment grid are now kept perfectly when a spidertron is switched
     - In particular, burner equipment grid items no longer lose their fuel, filtered slots are not lost and items such as spidertron remotes and modular armor do not lose their associated data    

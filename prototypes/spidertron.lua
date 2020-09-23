@@ -1,57 +1,37 @@
-local spidertron = table.deepcopy(data.raw["spider-vehicle"]["spidertron"])
-spidertron.fast_replaceable_group = "spidertron-switcher"
+local function create_variations(spidertron_name, weapon_list)
+    local spidertron = data.raw["spider-vehicle"][spidertron_name]
+    spidertron.fast_replaceable_group = "sws-group-" .. spidertron_name
 
+    local spidertron_item = data.raw["item-with-entity-data"]["spidertron"]
 
--- machine gun
-local spidertron1 = table.deepcopy(spidertron)
-spidertron1.name = "spidertron-alt-1"
-spidertron1.guns = {"spidertron-machine-gun", "spidertron-machine-gun", "spidertron-machine-gun", "spidertron-machine-gun"}
+    local names = {}
+    for _, weapon in pairs(weapon_list) do
+        if weapon ~= "" then
+            local spidertron_variation = table.deepcopy(spidertron)
+            local name = "sws-" .. spidertron_name .. "-" .. weapon
+            spidertron_variation.name = name
+            spidertron_variation.guns = {weapon, weapon, weapon, weapon}
+            table.insert(names, name)
 
--- (several?) shotgun
-local spidertron2 = table.deepcopy(spidertron)
-spidertron2.name = "spidertron-alt-2"
-spidertron2.guns = {"spidertron-shotgun", "spidertron-shotgun", "spidertron-shotgun", "spidertron-shotgun"}
+            local spidertron_variation_item = table.deepcopy(spidertron_item)
+            spidertron_variation_item.name = name
+            spidertron_variation_item.place_result = name
 
--- flamethrower
-local spidertron3 = table.deepcopy(spidertron)
-spidertron3.name = "spidertron-alt-3"
-spidertron3.guns = {"spidertron-flamethrower", "spidertron-flamethrower", "spidertron-flamethrower", "spidertron-flamethrower"}
+            data:extend{spidertron_variation, spidertron_variation_item}
+        else
+            table.insert(names, spidertron_name)
+        end
+    end
+    return names
+end
 
--- 4 rocket launchers
-local spidertron4 = table.deepcopy(spidertron)
-spidertron4.name = "spidertron-alt-4"
+local spidertron_names = create_variations("spidertron", {"spidertron-machine-gun", "spidertron-shotgun", "spidertron-flamethrower", "", "tank-cannon"})
+log(serpent.block(spidertron_names))
 
--- 4 cannons
-local spidertron5 = table.deepcopy(spidertron)
-spidertron5.name = "spidertron-alt-5"
-spidertron5.guns = {"tank-cannon", "tank-cannon", "tank-cannon", "tank-cannon"}
+if mods["spidertron-extended"] then
+    local mk2_names = create_variations("spidertronmk2", {"sws-machine-gun-mk2", "sws-shotgun-mk2", "sws-flamethrower-mk2", "", "tank-cannon"})
+    log(serpent.block(mk2_names))
+    local mk3_names = create_variations("spidertronmk3", {"sws-machine-gun-mk3", "sws-shotgun-mk3", "sws-flamethrower-mk3", "", "tank-cannon"})
+    log(serpent.block(mk3_names))
 
-
-data:extend{spidertron1, spidertron2, spidertron3, spidertron4, spidertron5}
-
-local spidertron_item = table.deepcopy(data.raw["item-with-entity-data"]["spidertron"])
-local spidertron_item1 = table.deepcopy(spidertron_item)
-local spidertron_item2 = table.deepcopy(spidertron_item)
-local spidertron_item3 = table.deepcopy(spidertron_item)
-local spidertron_item4 = table.deepcopy(spidertron_item)
-local spidertron_item5 = table.deepcopy(spidertron_item)
-spidertron_item1.name = "spidertron-alt-1"
-spidertron_item2.name = "spidertron-alt-2"
-spidertron_item3.name = "spidertron-alt-3"
-spidertron_item4.name = "spidertron-alt-4"
-spidertron_item5.name = "spidertron-alt-5"
-spidertron_item1.place_result = "spidertron-alt-1"
-spidertron_item2.place_result = "spidertron-alt-2"
-spidertron_item3.place_result = "spidertron-alt-3"
-spidertron_item4.place_result = "spidertron-alt-4"
-spidertron_item5.place_result = "spidertron-alt-5"
-
-data:extend{spidertron_item1,
-            spidertron_item2,
-            spidertron_item3,
-            spidertron_item4,
-            spidertron_item5}
-
-
-data.raw["recipe"]["spidertron"]["normal"].result = "spidertron-alt-4"
---data.raw["technology"]["spidertron"].effects = { {type = "unlock-recipe", recipe = "spidertron-alt-1"} }
+end

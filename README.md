@@ -13,6 +13,7 @@ Features
 - Ammo is saved between weapons, so you can rotate back to a weapon and its ammo will still be there
 - Machine gun, shotgun and flamethrower have all been given their own 'spidertron version' with increased range and damage compared to normal
 - Tank cannon and rocket launcher have the same stats as when fired from a tank and a spidertron respectively
+- Supports MK2 & MK3 spidertrons from [Spidertron Extended](https://mods.factorio.com/mod/spidertron-extended)
 
 -----
 Limitations
@@ -24,7 +25,7 @@ Limitations
 Future Updates?
 -----
 
-- Fully tested and balanced compatability with other spidertron mods (e.g. [Spidertron Extended](https://mods.factorio.com/mod/spidertron-extended) and [Spidertron squad control](https://mods.factorio.com/mod/Spider_Control))
+- Fully tested and balanced compatability with other spidertron mods (e.g. [Spidertron squad control](https://mods.factorio.com/mod/Spider_Control))
 - Please suggest modded weapons that should be added to the weapon rotation when using those mods
 
 -----

@@ -1,0 +1,19 @@
+{
+    "entity":
+    [
+      ["spidertron-alt-1", "sws-spidertron-spidertron-machine-gun"],
+      ["spidertron-alt-2", "sws-spidertron-spidertron-shotgun"],
+      ["spidertron-alt-3", "sws-spidertron-spidertron-flamethrower"],
+      ["spidertron-alt-4", "spidertron"],
+      ["spidertron-alt-5", "sws-spidertron-tank-cannon"]
+    ],
+    "item":
+    [
+      ["spidertron-alt-1", "sws-spidertron-spidertron-machine-gun"],
+      ["spidertron-alt-2", "sws-spidertron-spidertron-shotgun"],
+      ["spidertron-alt-3", "sws-spidertron-spidertron-flamethrower"],
+      ["spidertron-alt-4", "spidertron"],
+      ["spidertron-alt-5", "sws-spidertron-tank-cannon"]
+    ]
+  }
+  

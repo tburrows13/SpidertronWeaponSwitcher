@@ -1,3 +1,5 @@
+require 'util'
+
 --DEFAULT_COLORS = {{100, 100, 100}, {200, 200, 0}, {213, 0, 213}}
 MAP_ENTITY_INVENTORY = {["cargo-wagon"] = defines.inventory.cargo_wagon,
                         ["container"] = defines.inventory.chest,
@@ -7,20 +9,36 @@ MAP_ENTITY_INVENTORY = {["cargo-wagon"] = defines.inventory.cargo_wagon,
                         ["spider-vehicle"] = defines.inventory.car_trunk}
 
 on_spidertron_upgraded = script.generate_event_name()
+SWITCH_CHAINS = {
+{
+  "sws-spidertron-spidertron-machine-gun",
+  "sws-spidertron-spidertron-shotgun",
+  "sws-spidertron-spidertron-flamethrower",
+  "spidertron",
+  "sws-spidertron-tank-cannon"
+},{
+  "sws-spidertronmk2-sws-machine-gun-mk2",
+  "sws-spidertronmk2-sws-shotgun-mk2",
+  "sws-spidertronmk2-sws-flamethrower-mk2",
+  "spidertronmk2",
+  "sws-spidertronmk2-tank-cannon"
+},{
+  "sws-spidertronmk3-sws-machine-gun-mk3",
+  "sws-spidertronmk3-sws-shotgun-mk3",
+  "sws-spidertronmk3-sws-flamethrower-mk3",
+  "spidertronmk3",
+  "sws-spidertronmk3-tank-cannon"
+}}
 
-local function contains(array, element, remove)
-  for i, value in pairs(array) do
-    if value == element then
-      if remove then table.remove(array, i) end
-      return true
+
+local function get_next_name(current_name)
+  for _, chain in pairs(SWITCH_CHAINS) do
+    for i, name in pairs(chain) do
+      if name == current_name then
+        return chain[(i % #chain) + 1]
+      end
     end
   end
-  return false
-end
-
-local function get_next_name(name)
-  local alt_num = string.sub(name, -1)
-  return "spidertron-alt-" .. (alt_num % 5) + 1
 end
 
 
@@ -79,7 +97,7 @@ local function copy_inventory(old_inventory, inventory, filter_table)
 end
 
 
-local function replace_spidertron(previous_spidertron)
+local function replace_spidertron(previous_spidertron, name)
   --local previous_spidertron = global.spidertrons[player.index]
   local ammo_data = global.spidertron_saved_data[previous_spidertron.unit_number]
   if not ammo_data then
@@ -93,8 +111,6 @@ local function replace_spidertron(previous_spidertron)
   ammo_data[previous_spidertron.name] = ammo
   -- Save
   --log("Upgrading spidertron to level " .. name .. " for player " .. player.name)
-  log("Replacing spidertron " .. previous_spidertron.name .. " with " .. get_next_name(previous_spidertron.name))
-  local name = get_next_name(previous_spidertron.name)
 
 
   local last_user = previous_spidertron.last_user
@@ -270,20 +286,26 @@ end
 script.on_event("switch-spidertron-weapons",
   function(event)
     local player = game.get_player(event.player_index)
-    log("Switching spidertron weapon")
     local spidertron
-    if player.selected and player.selected.type == "spider-vehicle" and string.sub(player.selected.name, 1, 15) == "spidertron-alt-" then
+    if player.selected and player.selected.type == "spider-vehicle" then
       spidertron = player.selected
-    elseif player.vehicle and player.vehicle.type == "spider-vehicle" and string.sub(player.vehicle.name, 1, 15) == "spidertron-alt-" then
+    elseif player.vehicle and player.vehicle.type == "spider-vehicle" then
       spidertron = player.vehicle
-    else return
+    else
+      return
     end
 
-    local saved_data = store_spidertron_data(spidertron)
+    local next_name = get_next_name(spidertron.name)
+    if next_name then
+      log("Switching from " .. spidertron.name .. " to " .. next_name)
+      local saved_data = store_spidertron_data(spidertron)
 
-    local new_spidertron = replace_spidertron(spidertron)
+      local new_spidertron = replace_spidertron(spidertron, next_name)
 
-    place_stored_spidertron_data(new_spidertron, saved_data)
+      place_stored_spidertron_data(new_spidertron, saved_data)
+    else
+      log("No next name found for spidertron " .. spidertron.name)
+    end
   end
 )
 
@@ -291,17 +313,12 @@ script.on_event(defines.events.on_built_entity,
   function(event)
     log("Spidertron Alt built")
     local spidertron = event.created_entity
-    global.spidertron_saved_data[spidertron.unit_number] = {}
+    if get_next_name(spidertron.name) then
+      -- Checks that it is a spidertron that we care about
+      global.spidertron_saved_data[spidertron.unit_number] = {}
+    end
   end,
-  {{filter = "name", name = "spidertron-alt-1"},
-   {filter = "name", name = "spidertron-alt-2"},
-   {filter = "name", name = "spidertron-alt-3"},
-   {filter = "name", name = "spidertron-alt-4"},
-   {filter = "name", name = "spidertron-alt-5"},
-   {filter = "name", name = "spidertron-alt-6"},
-   {filter = "name", name = "spidertron-alt-7"},
-   {filter = "name", name = "spidertron-alt-8"},
-   {filter = "name", name = "spidertron-alt-9"}}
+  {{filter = "type", type = "spider-vehicle"}}
 )
 
 script.on_event(defines.events.on_player_mined_entity,
@@ -309,23 +326,19 @@ script.on_event(defines.events.on_player_mined_entity,
     local player = game.get_player(event.player_index)
     local spidertron = event.entity
     local buffer = event.buffer
-    log("Player " .. player.name .. " mined spidertron")
 
-    for spidertron_name, ammo_stacks in pairs(global.spidertron_saved_data[spidertron.unit_number]) do
-      for item_name, item_count in pairs(ammo_stacks) do
-        buffer.insert({name = item_name, count = item_count})
+    if get_next_name(spidertron.name) then
+      -- Checks that it is a spidertron that we care about
+      log("Player " .. player.name .. " mined spidertron")
+
+      for spidertron_name, ammo_inventory in pairs(global.spidertron_saved_data[spidertron.unit_number]) do
+        for i = 1, #ammo_inventory do
+          buffer.insert(ammo_inventory[i])
+        end
       end
     end
   end,
-  {{filter = "name", name = "spidertron-alt-1"},
-   {filter = "name", name = "spidertron-alt-2"},
-   {filter = "name", name = "spidertron-alt-3"},
-   {filter = "name", name = "spidertron-alt-4"},
-   {filter = "name", name = "spidertron-alt-5"},
-   {filter = "name", name = "spidertron-alt-6"},
-   {filter = "name", name = "spidertron-alt-7"},
-   {filter = "name", name = "spidertron-alt-8"},
-   {filter = "name", name = "spidertron-alt-9"}}
+  {{filter = "type", type = "spider-vehicle"}}
 )
 
 script.on_init(
@@ -333,3 +346,47 @@ script.on_init(
     global.spidertron_saved_data = {}
   end
 )
+
+local function config_changed_setup(changed_data)
+  -- Only run when this mod was present in the previous save as well. Otherwise, on_init will run.
+  local mod_changes = changed_data.mod_changes
+  local old_version
+  if mod_changes and mod_changes["SpidertronWeaponSwitcher"] and mod_changes["SpidertronWeaponSwitcher"]["old_version"] then
+    old_version = mod_changes["SpidertronWeaponSwitcher"]["old_version"]
+  else
+    return
+  end
+
+  log("Coming from old version: " .. old_version)
+  old_version = util.split(old_version, ".")
+  for i=1,#old_version do
+    old_version[i] = tonumber(old_version[i])
+  end
+
+  if old_version[1] == 1 then
+    if old_version[2] <= 1 and old_version[3] < 2 then
+      log("Running pre 1.1.2 migration")
+      -- Convert inventory.get_contents() to script inventory and migrate prototype names
+      local new_name = {["spidertron-alt-1"] = "sws-spidertron-spidertron-machine-gun",
+                        ["spidertron-alt-2"] = "sws-spidertron-spidertron-shotgun",
+                        ["spidertron-alt-3"] = "sws-spidertron-spidertron-flamethrower",
+                        ["spidertron-alt-4"] = "spidertron",
+                        ["spidertron-alt-5"] = "sws-spidertron-tank-cannon"
+                      }
+      for unit_number, ammo_data in pairs(global.spidertron_saved_data) do
+        local new_ammo_data = {}
+        for spidertron_name, previous_ammo in pairs(ammo_data) do
+          local ammo_inventory = game.create_inventory(500)
+          for name, count in pairs(previous_ammo) do
+            ammo_inventory.insert({name=name, count=count})
+          end
+          new_ammo_data[new_name[spidertron_name]] = ammo_inventory
+        end
+        global.spidertron_saved_data[unit_number] = new_ammo_data
+      end
+
+    end
+  end
+end
+script.on_configuration_changed(config_changed_setup)
+
