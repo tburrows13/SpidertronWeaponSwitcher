@@ -1,4 +1,10 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.1.3
+Date: 23 September 2020
+  Features:
+    - Spidertron GUI now stays open after switching weapons
+    - Added remote interface `on_spidertron_switched`
+---------------------------------------------------------------------------------------------------
 Version: 1.1.2
 Date: 23 September 2020
   Features:

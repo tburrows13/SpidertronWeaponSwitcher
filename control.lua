@@ -8,7 +8,6 @@ MAP_ENTITY_INVENTORY = {["cargo-wagon"] = defines.inventory.cargo_wagon,
                         ["logistic-container"] = defines.inventory.chest,
                         ["spider-vehicle"] = defines.inventory.car_trunk}
 
---on_spidertron_upgraded = script.generate_event_name() Coming in future update
 SWITCH_CHAINS = {
 {
   "sws-spidertron-spidertron-machine-gun",
@@ -29,6 +28,9 @@ SWITCH_CHAINS = {
   "spidertronmk3",
   "sws-spidertronmk3-tank-cannon"
 }}
+
+on_spidertron_switched = script.generate_event_name()  -- Called
+remote.add_interface("SpidertronWeaponSwitcher", {get_events = function() return {on_spidertron_switched = on_spidertron_switched} end})
 
 
 local function get_next_name(current_name)
@@ -99,7 +101,8 @@ end
 
 local function replace_spidertron(previous_spidertron, name)
   --local previous_spidertron = global.spidertrons[player.index]
-  local ammo_data = global.spidertron_saved_data[previous_spidertron.unit_number]
+  local previous_unit_number = previous_spidertron.unit_number
+  local ammo_data = global.spidertron_saved_data[previous_unit_number]
   if not ammo_data then
     -- Perhaps the spidertron was placed before the mod was initialised
     ammo_data = {}
@@ -109,9 +112,14 @@ local function replace_spidertron(previous_spidertron, name)
   -- Save previous_spidertron ammo
   local ammo = copy_inventory(previous_spidertron.get_inventory(defines.inventory.car_ammo)).inventory
   ammo_data[previous_spidertron.name] = ammo
-  -- Save
-  --log("Upgrading spidertron to level " .. name .. " for player " .. player.name)
 
+  -- Store which players had the old GUI open
+  local players_with_gui_open = {}
+  for _, player in pairs(game.connected_players) do
+    if player.opened == previous_spidertron then
+      table.insert(players_with_gui_open, player)
+    end
+  end
 
   local last_user = previous_spidertron.last_user
   local spidertron = previous_spidertron.surface.create_entity{
@@ -127,6 +135,11 @@ local function replace_spidertron(previous_spidertron, name)
     spidertron.last_user = last_user
   end
 
+  -- Reopen the new GUI for players that had the old one open
+  for _, player in pairs(players_with_gui_open) do
+    player.opened = spidertron
+  end
+
   -- Copy across ammo
   local previous_ammo = ammo_data[spidertron.name]
   if previous_ammo then
@@ -137,15 +150,14 @@ local function replace_spidertron(previous_spidertron, name)
 
   -- Store the ammo_data under the new spidertron's ID
   global.spidertron_saved_data[spidertron.unit_number] = ammo_data
+  global.spidertron_saved_data[previous_unit_number] = nil
 
   -- Raise event so that other mods can handle the change
-  --script.raise_event(on_spidertron_upgraded, {old_spidertron = previous_spidertron, new_spidertron = spidertron})
+  script.raise_event(on_spidertron_switched, {previous_spidertron_unit_number = previous_unit_number, new_spidertron = spidertron})
 
   previous_spidertron.destroy()
   return spidertron
 end
-
---script.on_event(on_spidertron_upgraded, function(event) log("Upgraded spidertron: " .. event.old_spidertron.unit_number .. ", " .. event.new_spidertron.unit_number)end)
 
 local function store_spidertron_data(spidertron)
   -- Eject player if any
