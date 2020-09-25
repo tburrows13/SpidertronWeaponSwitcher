@@ -16,6 +16,7 @@ local function create_variations(spidertron_name, weapon_list)
             local spidertron_variation_item = table.deepcopy(spidertron_item)
             spidertron_variation_item.name = name
             spidertron_variation_item.place_result = name
+            spidertron_variation_item.flags = {"hidden"}
 
             data:extend{spidertron_variation, spidertron_variation_item}
         else

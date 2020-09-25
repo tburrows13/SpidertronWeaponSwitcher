@@ -9,6 +9,7 @@ data:extend{flamethrower}
 
 local shotgun = table.deepcopy(data.raw["gun"]["combat-shotgun"])
 shotgun.name = "spidertron-shotgun"
+shotgun.flags = {"hidden"}
 shotgun.attack_parameters.range = 20
 shotgun.attack_parameters.damage_modifier = 2
 shotgun.attack_parameters.gun_barrel_length = 0
@@ -30,6 +31,7 @@ flamethrowermk2.attack_parameters.range = 30
 
 local shotgunmk2 = table.deepcopy(shotgun)
 shotgunmk2.name = "sws-shotgun-mk2"
+shotgunmk2.flags = {"hidden"}
 shotgunmk2.attack_parameters.range = 30
 
 local machinegunmk2 = table.deepcopy(machinegun)
@@ -42,6 +44,7 @@ flamethrowermk3.attack_parameters.range = 40
 
 local shotgunmk3 = table.deepcopy(shotgun)
 shotgunmk3.name = "sws-shotgun-mk3"
+shotgunmk3.flags = {"hidden"}
 shotgunmk3.attack_parameters.range = 40
 
 local machinegunmk3 = table.deepcopy(machinegun)

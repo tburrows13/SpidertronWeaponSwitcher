@@ -239,11 +239,7 @@ local function place_stored_spidertron_data(spidertron, saved_data)
             placed_equipment.burner.currently_burning = equipment.burner_currently_burning
             placed_equipment.burner.remaining_burning_fuel = equipment.burner_remaining_burning_fuel
           end
-        else  -- No space in the grid because we have moved to a smaller grid
-          player.surface.spill_item_stack(spidertron.position, {name=equipment.name})
         end
-      else  -- No space in the grid because we have 'upgraded' to no grid
-        player.surface.spill_item_stack(spidertron.position, {name=equipment.name})
       end
     end
   end
