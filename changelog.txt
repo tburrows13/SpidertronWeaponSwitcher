@@ -1,4 +1,14 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.1.5
+Date: ?????
+  Bugfixes:
+    - Fixed alternate weapon switcher key being invalid
+---------------------------------------------------------------------------------------------------
+Version: 1.1.4
+Date: 25 September 2020
+  Changes:
+    - Spidertron and weapon variations no longer show up in filter selections and logistic requests
+---------------------------------------------------------------------------------------------------
 Version: 1.1.4
 Date: 25 September 2020
   Changes:
