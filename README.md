@@ -22,6 +22,12 @@ Limitations
 - When you switch weapons, that spidertron's name will be lost, it will stop moving, and any remotes connected to it that are stored in an inventory more than 30 tiles from a player will become disconnected
 
 -----
+Translation
+-----
+
+You can help by translating this mod into your language using [CrowdIn](https://crowdin.com/project/factorio-mods-localization). Any translations made will be included in the next release.
+
+-----
 Mod Compatibility
 -----
 When a spidertron is switched, the entity is destroyed and replaced with a new one that has different weapons. If your mod stores references to spidertrons, then these references will become invalid after a switch. This mod adds the event `on_spidertron_switched` containing `previous_spidertron_unit_number` :: int and `new_spidertron` :: LuaEntity that will allow you to transfer information associated with the previous spidertron's unit number to the new spidertron.
@@ -38,4 +44,6 @@ end
 Let me know if you plan on using this and I can help you with debugging or adding new features if you need them.
 
 -----
-Please leave feedback, balance suggestions and bug reports in the mod discussion tab. If you have specific weapons from other mods that you'd like added into the weapon rotation, let me know!
+
+If you have specific weapons from other mods that you'd like added into the weapon rotation, let me know!
+Check out my other mods: [Spidertron Waypoints](https://mods.factorio.com/mod/SpidertronWaypoints) and [Spidertron Engineer](https://mods.factorio.com/mod/SpidertronEngineer)
