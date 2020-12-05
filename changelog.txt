@@ -1,13 +1,10 @@
 ---------------------------------------------------------------------------------------------------
-Version: 1.1.5
-Date: ?????
+Version: 1.2.0
+Date: 4 December 2020
+  Features:
+    - Updated to Factorio 1.1
   Bugfixes:
     - Fixed alternate weapon switcher key being invalid
----------------------------------------------------------------------------------------------------
-Version: 1.1.4
-Date: 25 September 2020
-  Changes:
-    - Spidertron and weapon variations no longer show up in filter selections and logistic requests
 ---------------------------------------------------------------------------------------------------
 Version: 1.1.4
 Date: 25 September 2020

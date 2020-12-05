@@ -110,7 +110,7 @@ local function replace_spidertron(previous_spidertron, name)
   global.spidertron_saved_data[previous_spidertron.unit_number] = {}
 
   -- Save previous_spidertron ammo
-  local ammo = copy_inventory(previous_spidertron.get_inventory(defines.inventory.car_ammo)).inventory
+  local ammo = copy_inventory(previous_spidertron.get_inventory(defines.inventory.spider_ammo)).inventory
   ammo_data[previous_spidertron.name] = ammo
 
   -- Store which players had the old GUI open
@@ -143,7 +143,7 @@ local function replace_spidertron(previous_spidertron, name)
   -- Copy across ammo
   local previous_ammo = ammo_data[spidertron.name]
   if previous_ammo then
-    copy_inventory(previous_ammo, spidertron.get_inventory(defines.inventory.car_ammo))
+    copy_inventory(previous_ammo, spidertron.get_inventory(defines.inventory.spider_ammo))
     previous_ammo.destroy()
     ammo_data[spidertron.name] = nil  -- Now that we have retrieved the ammo_data, delete it from storage
   end
@@ -182,7 +182,7 @@ local function store_spidertron_data(spidertron)
     end
   end
 
-  local trunk = copy_inventory(spidertron.get_inventory(defines.inventory.car_trunk))
+  local trunk = copy_inventory(spidertron.get_inventory(defines.inventory.spider_trunk))
 
   local color = spidertron.color
 
@@ -214,7 +214,6 @@ local function store_spidertron_data(spidertron)
     end
   end
 
-
   --global.spidertron_saved_data[player.index] = {index = player.index, equipment = grid_contents, ammo = ammo, trunk = trunk, color = color}
   return {index = spidertron.unit_number, equipment = grid_contents, trunk = trunk, color = color, auto_target = auto_target, autopilot_destination = autopilot_destination, player = player, connected_remotes = connected_remotes}
 end
@@ -245,7 +244,7 @@ local function place_stored_spidertron_data(spidertron, saved_data)
   end
 
   -- Copy across trunk
-  local trunk_inventory = spidertron.get_inventory(defines.inventory.car_trunk)
+  local trunk_inventory = spidertron.get_inventory(defines.inventory.spider_trunk)
   copy_inventory(saved_data.trunk.inventory, trunk_inventory, saved_data.trunk.filters)
   saved_data.trunk.inventory.destroy()
 
