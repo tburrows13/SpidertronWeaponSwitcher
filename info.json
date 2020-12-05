@@ -5,5 +5,5 @@
     "author": "Xorimuth",
     "description": "Allows the Spidertron to fire any type of weapon by cycling through different loadouts with Control + Tab.",
     "factorio_version": "1.1",
-    "dependencies": ["base"]
+    "dependencies": ["base", "? SpidertronWaypoints > 1.7.1"]
   }

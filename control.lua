@@ -8,7 +8,7 @@ MAP_ENTITY_INVENTORY = {["cargo-wagon"] = defines.inventory.cargo_wagon,
                         ["car"] = defines.inventory.car_trunk,
                         ["character"] = defines.inventory.character_main,
                         ["logistic-container"] = defines.inventory.chest,
-                        ["spider-vehicle"] = defines.inventory.car_trunk}
+                        ["spider-vehicle"] = defines.inventory.spider_trunk}
 
 SWITCH_CHAINS = {
 {
@@ -137,8 +137,9 @@ script.on_event("switch-spidertron-weapons",
       end
       global.spidertron_follow_list[new_spidertron.unit_number] = follow_list
       global.spidertron_follow_list[spidertron.unit_number] = nil
+
       -- Raise event so that other mods can handle the change
-      script.raise_event(on_spidertron_switched, {previous_spidertron = spidertron, new_spidertron = new_spidertron})
+      script.raise_event(on_spidertron_switched, {old_spidertron = spidertron, new_spidertron = new_spidertron})
 
       -- If changed spidertron was following another spidertron then we need to ensure that it has been added to the correct reverse lookup table
       add_to_follow_list(new_spidertron)

@@ -1,8 +1,11 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.2.0
-Date: 4 December 2020
+Date: 5 December 2020
   Features:
     - Updated to Factorio 1.1
+    - Spidertrons now keep their target and following entities when switched
+  Changes:
+    - Remote interface value `previous_spidertron_unit_number` :: int changed to `old_spidertron` :: LuaEntity
   Bugfixes:
     - Fixed alternate weapon switcher key being invalid
 ---------------------------------------------------------------------------------------------------

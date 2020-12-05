@@ -30,7 +30,7 @@ You can help by translating this mod into your language using [CrowdIn](https://
 -----
 Mod Compatibility
 -----
-When a spidertron is switched, the entity is destroyed and replaced with a new one that has different weapons. If your mod stores references to spidertrons, then these references will become invalid after a switch. This mod adds the event `on_spidertron_switched` containing `previous_spidertron_unit_number` :: int and `new_spidertron` :: LuaEntity that will allow you to transfer information associated with the previous spidertron's unit number to the new spidertron.
+When a spidertron is switched, the entity is destroyed and replaced with a new one that has different weapons. If your mod stores references to spidertrons, then these references will become invalid after a switch. This mod adds the event `on_spidertron_switched` containing `old_spidertron` :: LuaEntity and `new_spidertron` :: LuaEntity that will allow you to transfer information associated with the old spidertron's unit number to the new spidertron.
 ```
 if game.active_mods["SpidertronWeaponSwitcher"] then
     local event_ids = remote.call("SpidertronWeaponSwitcher", "get_events")
