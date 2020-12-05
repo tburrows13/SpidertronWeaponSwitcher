@@ -65,7 +65,7 @@ spidertron_lib.copy_inventory = copy_inventory
 
 
 function spidertron_lib.serialise_spidertron(spidertron)
-  local serialised_data = {index = spidertron.unit_number}
+  local serialised_data = {unit_number = spidertron.unit_number}
 
   -- Eject player if any
   local player = spidertron.get_driver()
@@ -108,7 +108,6 @@ function spidertron_lib.serialise_spidertron(spidertron)
   serialised_data.equipment = grid_contents
 
 
-
   -- Find all connected remotes in player inventories or in radius 30 around all players
   local connected_remotes = {}
   --for _, entity in pairs(surface.find_entities_filtered{type=types}) do
@@ -149,7 +148,7 @@ function spidertron_lib.deserialise_spidertron(spidertron, serialised_data)
                             "last_user",
                             "color",
                             "vehicle_automatic_targeting_parameters",
-                            "autopilot_target",
+                            "autopilot_destination",
                             "follow_target",
                             "follow_offset"} do
     local value = serialised_data[attribute]
