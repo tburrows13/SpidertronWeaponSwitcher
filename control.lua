@@ -1,4 +1,5 @@
 require 'util'
+require 'utils'
 spidertron_lib = require 'spidertron_lib'
 
 --DEFAULT_COLORS = {{100, 100, 100}, {200, 200, 0}, {213, 0, 213}}
@@ -91,10 +92,6 @@ local function replace_spidertron(previous_spidertron, name)
   global.spidertron_saved_data[spidertron.unit_number] = ammo_data
   global.spidertron_saved_data[previous_unit_number] = nil
 
-  -- Raise event so that other mods can handle the change
-  script.raise_event(on_spidertron_switched, {previous_spidertron_unit_number = previous_unit_number, new_spidertron = spidertron})
-
-  previous_spidertron.destroy()
   return spidertron
 end
 
@@ -121,6 +118,33 @@ script.on_event("switch-spidertron-weapons",
       -- Stop the deserialiser overwriting the ammo contents with what the spidertron previously had
       saved_data.ammo = nil
       spidertron_lib.deserialise_spidertron(new_spidertron, saved_data)
+
+      -- Find and reconnect all following spidertrons.
+      -- Filter out ones that have since had their commands changed or cancelled
+      local follow_list = global.spidertron_follow_list[spidertron.unit_number]
+      if follow_list then
+        for i, follower in pairs(follow_list) do
+          if follower and follower.valid then
+            local follow_target = follower.follow_target
+            if follow_target and follow_target.valid and follow_target.unit_number == spidertron.unit_number then
+              -- If the follower still exists and it is still following the old spidertron, make it follow the new one
+              follower.follow_target = new_spidertron
+            else
+              follow_list[i] = nil
+            end
+          end
+        end
+      end
+      global.spidertron_follow_list[new_spidertron.unit_number] = follow_list
+      global.spidertron_follow_list[spidertron.unit_number] = nil
+      -- Raise event so that other mods can handle the change
+      script.raise_event(on_spidertron_switched, {previous_spidertron = spidertron, new_spidertron = new_spidertron})
+
+      -- If changed spidertron was following another spidertron then we need to ensure that it has been added to the correct reverse lookup table
+      add_to_follow_list(new_spidertron)
+
+      spidertron.destroy()
+
     else
       log("No next name found for spidertron " .. spidertron.name)
     end
@@ -159,9 +183,30 @@ script.on_event(defines.events.on_player_mined_entity,
   {{filter = "type", type = "spider-vehicle"}}
 )
 
+function add_to_follow_list(spidertron)
+  local target = spidertron.follow_target
+  if target and target.type == "spider-vehicle" then
+    local follow_list = global.spidertron_follow_list[target.unit_number] or {}
+    if not contains(follow_list, spidertron) then
+      table.insert(follow_list, spidertron)
+    end
+    global.spidertron_follow_list[target.unit_number] = follow_list
+  end
+
+end
+
+script.on_event(defines.events.on_player_used_spider_remote,
+  function(event)
+    if event.success then
+      add_to_follow_list(event.vehicle)
+    end
+  end
+)
+
 script.on_init(
   function()
     global.spidertron_saved_data = {}
+    global.spidertron_follow_list = {}
   end
 )
 
@@ -202,7 +247,11 @@ local function config_changed_setup(changed_data)
         end
         global.spidertron_saved_data[unit_number] = new_ammo_data
       end
+    end
 
+    if old_version[2] < 2 then
+      log("Running pre 1.2.0 migration")
+      global.spidertron_follow_list = {}
     end
   end
 end
