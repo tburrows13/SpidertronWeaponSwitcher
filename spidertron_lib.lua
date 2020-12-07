@@ -67,6 +67,8 @@ spidertron_lib.copy_inventory = copy_inventory
 function spidertron_lib.serialise_spidertron(spidertron)
   local serialised_data = {unit_number = spidertron.unit_number}
 
+  serialised_data.driver_is_gunner = spidertron.driver_is_gunner
+
   -- Eject player if any
   local player = spidertron.get_driver()
   if player then
@@ -81,16 +83,23 @@ function spidertron_lib.serialise_spidertron(spidertron)
   serialised_data.color = spidertron.color
   -- serialised_data["name"] = spidertron.name
 
+  serialised_data.vehicle_logistic_requests_enabled = spidertron.vehicle_logistic_requests_enabled
+  serialised_data.enable_logistics_while_moving = spidertron.enable_logistics_while_moving
   serialised_data.vehicle_automatic_targeting_parameters = spidertron.vehicle_automatic_targeting_parameters
+
   serialised_data.autopilot_destination = spidertron.autopilot_destination
   serialised_data.follow_target = spidertron.follow_target
   serialised_data.follow_offset = spidertron.follow_offset
 
   serialised_data.health = spidertron.get_health_ratio()
 
+
+  -- Inventories
   serialised_data.trunk = copy_inventory(spidertron.get_inventory(defines.inventory.spider_trunk))
   serialised_data.ammo = copy_inventory(spidertron.get_inventory(defines.inventory.spider_ammo))
+  serialised_data.trash = copy_inventory(spidertron.get_inventory(defines.inventory.spider_trash))
 
+  -- Equipment grid
   local grid_contents = {}
   if spidertron.grid then
     for _, equipment in pairs(spidertron.grid.equipment) do
@@ -107,6 +116,12 @@ function spidertron_lib.serialise_spidertron(spidertron)
   end
   serialised_data.equipment = grid_contents
 
+  -- Logistic request slots
+  local logistic_slots = {}
+  for i = 1, spidertron.request_slot_count do
+    logistic_slots[i] = spidertron.get_vehicle_logistic_slot(i)
+  end
+  serialised_data.logistic_slots = logistic_slots
 
   -- Find all connected remotes in player inventories or in radius 30 around all players
   local connected_remotes = {}
@@ -147,12 +162,14 @@ function spidertron_lib.deserialise_spidertron(spidertron, serialised_data)
                             "direction",
                             "last_user",
                             "color",
+                            "vehicle_logistic_requests_enabled",
+                            "enable_logistics_while_moving",
                             "vehicle_automatic_targeting_parameters",
                             "autopilot_destination",
                             "follow_target",
                             "follow_offset"} do
     local value = serialised_data[attribute]
-    if value then
+    if value ~= nil then
       spidertron[attribute] = value
     end
   end
@@ -161,6 +178,11 @@ function spidertron_lib.deserialise_spidertron(spidertron, serialised_data)
   local player = serialised_data.player_occupied
   if player then
     spidertron.set_driver(player)
+  end
+
+  local driver_is_gunner = serialised_data.driver_is_gunner
+  if driver_is_gunner ~= nil then
+    spidertron.driver_is_gunner = driver_is_gunner
   end
 
   -- Copy across health
@@ -183,6 +205,23 @@ function spidertron_lib.deserialise_spidertron(spidertron, serialised_data)
     local new_ammo = spidertron.get_inventory(defines.inventory.spider_trunk)
     copy_inventory(previous_ammo.inventory, new_ammo, previous_ammo.filters)
     previous_ammo.inventory.destroy()
+  end
+
+  -- Copy across trash
+  local previous_trash = serialised_data.trash
+  if previous_trash then
+    local new_trash = spidertron.get_inventory(defines.inventory.spider_trash)
+    copy_inventory(previous_trash.inventory, new_trash, previous_trash.filters)
+    previous_trash.inventory.destroy()
+  end
+
+
+  -- Copy across logistic request slots
+  local logistic_slots = serialised_data.logistic_slots
+  if logistic_slots then
+    for i, slot in pairs(logistic_slots) do
+      spidertron.set_vehicle_logistic_slot(i, slot)
+    end
   end
 
   -- Copy across equipment grid

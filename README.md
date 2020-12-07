@@ -19,7 +19,7 @@ Features
 Limitations
 -----
 
-- When you switch weapons, that spidertron's name will be lost, it will stop moving, and any remotes connected to it that are stored in an inventory more than 30 tiles from a player will become disconnected
+- When you switch weapons, that spidertron's name will be lost, it will stop moving, it will forget all waypoints beyond its current target (unless you are using [Spidertron Waypoints](https://mods.factorio.com/mod/SpidertronWaypoints)), and any remotes connected to it that are stored in an inventory more than 30 tiles from a player will become disconnected
 
 -----
 Translation
