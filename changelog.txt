@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.2.1
+Date: 12 December 2020
+  Bugfixes:
+    - Fixed crash when switching spidertron whilst a nearby entity contains a remote pointing to it
+---------------------------------------------------------------------------------------------------
 Version: 1.2.0
 Date: 7 December 2020
   Features:

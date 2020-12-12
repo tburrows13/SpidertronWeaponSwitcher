@@ -1,3 +1,10 @@
+MAP_ENTITY_INVENTORY = {["cargo-wagon"] = defines.inventory.cargo_wagon,
+                        ["container"] = defines.inventory.chest,
+                        ["car"] = defines.inventory.car_trunk,
+                        ["character"] = defines.inventory.character_main,
+                        ["logistic-container"] = defines.inventory.chest,
+                        ["spider-vehicle"] = defines.inventory.spider_trunk}
+
 
 local spidertron_lib = {}
 
@@ -66,6 +73,7 @@ spidertron_lib.copy_inventory = copy_inventory
 
 function spidertron_lib.serialise_spidertron(spidertron)
   local serialised_data = {unit_number = spidertron.unit_number}
+  serialised_data.name = spidertron.name
 
   serialised_data.driver_is_gunner = spidertron.driver_is_gunner
 
@@ -81,7 +89,6 @@ function spidertron_lib.serialise_spidertron(spidertron)
   serialised_data.direction = spidertron.direction
   serialised_data.last_user = spidertron.last_user
   serialised_data.color = spidertron.color
-  -- serialised_data["name"] = spidertron.name
 
   serialised_data.vehicle_logistic_requests_enabled = spidertron.vehicle_logistic_requests_enabled
   serialised_data.enable_logistics_while_moving = spidertron.enable_logistics_while_moving
@@ -202,7 +209,7 @@ function spidertron_lib.deserialise_spidertron(spidertron, serialised_data)
   -- Copy across ammo
   local previous_ammo = serialised_data.ammo
   if previous_ammo then
-    local new_ammo = spidertron.get_inventory(defines.inventory.spider_trunk)
+    local new_ammo = spidertron.get_inventory(defines.inventory.spider_ammo)
     copy_inventory(previous_ammo.inventory, new_ammo, previous_ammo.filters)
     previous_ammo.inventory.destroy()
   end

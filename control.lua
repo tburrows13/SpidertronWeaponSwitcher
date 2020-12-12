@@ -3,12 +3,6 @@ require 'utils'
 spidertron_lib = require 'spidertron_lib'
 
 --DEFAULT_COLORS = {{100, 100, 100}, {200, 200, 0}, {213, 0, 213}}
-MAP_ENTITY_INVENTORY = {["cargo-wagon"] = defines.inventory.cargo_wagon,
-                        ["container"] = defines.inventory.chest,
-                        ["car"] = defines.inventory.car_trunk,
-                        ["character"] = defines.inventory.character_main,
-                        ["logistic-container"] = defines.inventory.chest,
-                        ["spider-vehicle"] = defines.inventory.spider_trunk}
 
 SWITCH_CHAINS = {
 {
