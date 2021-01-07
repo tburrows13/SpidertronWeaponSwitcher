@@ -1,4 +1,11 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.2.2
+Date: 7 January 2021
+  Features:
+    - Waypoints, gun selection and body direction are now saved when switching weapons
+  Compatibility:
+    - Fixed occasional crash when playing with Spidertron Enhancements
+---------------------------------------------------------------------------------------------------
 Version: 1.2.1
 Date: 12 December 2020
   Bugfixes:
