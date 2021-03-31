@@ -70,6 +70,25 @@ local function copy_inventory(old_inventory, inventory, filter_table)
 end
 spidertron_lib.copy_inventory = copy_inventory
 
+local function serialise_burner(burner)
+  local serialised_data = {}
+  serialised_data.inventory = copy_inventory(burner.inventory).inventory
+  serialised_data.burnt_result_inventory = copy_inventory(burner.burnt_result_inventory).inventory
+  serialised_data.heat = burner.heat
+  serialised_data.currently_burning = burner.currently_burning
+  serialised_data.remaining_burning_fuel = burner.remaining_burning_fuel
+  serialised_data.serialised_burner = true  -- Allows distinguishing between 'serialised_data' and a LuaBurner (from older version)
+  return serialised_data
+end
+
+local function deserialise_burner(burner, serialised_data)
+  copy_inventory(serialised_data.inventory, burner.inventory)
+  copy_inventory(serialised_data.burnt_result_inventory, burner.burnt_result_inventory)
+  burner.heat = serialised_data.heat
+  burner.currently_burning = serialised_data.currently_burning
+  burner.remaining_burning_fuel = serialised_data.remaining_burning_fuel
+end
+
 
 function spidertron_lib.serialise_spidertron(spidertron)
   local serialised_data = {unit_number = spidertron.unit_number}
@@ -111,17 +130,17 @@ function spidertron_lib.serialise_spidertron(spidertron)
   serialised_data.ammo = copy_inventory(spidertron.get_inventory(defines.inventory.spider_ammo))
   serialised_data.trash = copy_inventory(spidertron.get_inventory(defines.inventory.spider_trash))
 
+  if spidertron.burner then
+    serialised_data.burner = serialise_burner(spidertron.burner)
+  end
+
   -- Equipment grid
   local grid_contents = {}
   if spidertron.grid then
     for _, equipment in pairs(spidertron.grid.equipment) do
-      local equipment_data = {name=equipment.name, position=equipment.position, energy=equipment.energy, shield=equipment.shield, burner=equipment.burner}
+      local equipment_data = {name=equipment.name, position=equipment.position, energy=equipment.energy, shield=equipment.shield}
       if equipment.burner then  -- e.g. BurnerGenerator mod
-        equipment_data.burner_inventory = copy_inventory(equipment.burner.inventory).inventory
-        equipment_data.burner_burnt_result_inventory = copy_inventory(equipment.burner.burnt_result_inventory).inventory
-        equipment_data.burner_burner_heat = equipment.burner.heat
-        equipment_data.burner_currently_burning = equipment.burner.currently_burning
-        equipment_data.burner_remaining_burning_fuel = equipment.burner.remaining_burning_fuel
+        equipment_data.burner = serialise_burner(equipment.burner)
       end
       table.insert(grid_contents, equipment_data)
     end
@@ -160,11 +179,21 @@ function spidertron_lib.serialise_spidertron(spidertron)
   end
   serialised_data.connected_remotes = connected_remotes
 
+  -- Store which players had this spidertron's GUI open
+  local players_with_gui_open = {}
+  for _, player in pairs(game.connected_players) do
+    if player.opened == spidertron then
+      table.insert(players_with_gui_open, player)
+    end
+  end
+  serialised_data.players_with_gui_open = players_with_gui_open
+  
+
   return serialised_data
 end
 
 
-function spidertron_lib.deserialise_spidertron(spidertron, serialised_data)
+function spidertron_lib.deserialise_spidertron(spidertron, serialised_data, reopen_guis)
   -- Copy all data in serialised_data into spidertron
   -- Set `serialised_data` fields to `nil` to prevent that attribute of `spidertron` being overwritten
 
@@ -249,6 +278,11 @@ function spidertron_lib.deserialise_spidertron(spidertron, serialised_data)
     previous_trash.inventory.destroy()
   end
 
+  -- Copy across fuel, remaining_burning_fuel, etc (for modded spidertrons that use fuel)
+  local burner = serialised_data.burner
+  if burner then
+    deserialise_burner(spidertron.burner, burner)
+  end
 
   -- Copy across logistic request slots
   local logistic_slots = serialised_data.logistic_slots
@@ -268,7 +302,11 @@ function spidertron_lib.deserialise_spidertron(spidertron, serialised_data)
         if placed_equipment then
           if equipment.energy then placed_equipment.energy = equipment.energy end
           if equipment.shield and equipment.shield > 0 then placed_equipment.shield = equipment.shield end
-          if equipment.burner then
+          if equipment.burner and equipment.burner.serialised_burner then
+            -- Extra check for .serialised_burner to differentiate with legacy version below
+            deserialise_burner(placed_equipment.burner, equipment.burner)
+          elseif equipment.burner then
+            -- Legacy alternative
             copy_inventory(equipment.burner_inventory, placed_equipment.burner.inventory)
             copy_inventory(equipment.burner_burnt_result_inventory, placed_equipment.burner.burnt_result_inventory)
             if equipment.heat then placed_equipment.burner.heat = equipment.burner_heat end
@@ -290,6 +328,16 @@ function spidertron_lib.deserialise_spidertron(spidertron, serialised_data)
     for _, remote in pairs(connected_remotes) do
       if remote and remote.valid_for_read and remote.prototype.type == "spidertron-remote" then
         remote.connected_entity = spidertron
+      end
+    end
+  end
+
+  local players_with_gui_open = serialised_data.players_with_gui_open
+  if reopen_guis and players_with_gui_open then
+    -- Reopen the new GUI for players that had the old one open
+    for _, player in pairs(players_with_gui_open) do
+      if player.valid then
+        player.opened = spidertron
       end
     end
   end

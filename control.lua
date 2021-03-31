@@ -53,14 +53,6 @@ local function replace_spidertron(previous_spidertron, name)
   local ammo = spidertron_lib.copy_inventory(previous_spidertron.get_inventory(defines.inventory.spider_ammo)).inventory
   ammo_data[previous_spidertron.name] = ammo
 
-  -- Store which players had the old GUI open
-  local players_with_gui_open = {}
-  for _, player in pairs(game.connected_players) do
-    if player.opened == previous_spidertron then
-      table.insert(players_with_gui_open, player)
-    end
-  end
-
   local spidertron = previous_spidertron.surface.create_entity{
     name = name,
     position = previous_spidertron.position,
@@ -68,11 +60,6 @@ local function replace_spidertron(previous_spidertron, name)
     fast_replace = true,
     spill = false
   }
-
-  -- Reopen the new GUI for players that had the old one open
-  for _, player in pairs(players_with_gui_open) do
-    player.opened = spidertron
-  end
 
   -- Copy across ammo
   local previous_ammo = ammo_data[spidertron.name]
@@ -111,7 +98,7 @@ script.on_event("switch-spidertron-weapons",
 
       -- Stop the deserialiser overwriting the ammo contents with what the spidertron previously had
       saved_data.ammo = nil
-      spidertron_lib.deserialise_spidertron(new_spidertron, saved_data)
+      spidertron_lib.deserialise_spidertron(new_spidertron, saved_data, true)
 
       -- Find and reconnect all following spidertrons.
       -- Filter out ones that have since had their commands changed or cancelled
