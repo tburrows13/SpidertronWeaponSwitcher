@@ -19,8 +19,8 @@ Features
 Limitations
 -----
 
-- When you switch weapons, that spidertron's name will be lost, it will stop moving, it will forget all waypoints beyond its current target (unless you are using [Spidertron Waypoints](https://mods.factorio.com/mod/SpidertronWaypoints)), and any remotes connected to it that are stored in an inventory more than 30 tiles from a player will become disconnected
-- Compatibility with [Spidertron Enhancements](https://mods.factorio.com/mod/SpidertronWaypoints) is limited. Specifically, any ammo in inactive weapon slots is lost when using that mod's enter/exit vehicles feature 
+- When you switch a spidertron's weapons, any remotes connected to it that are stored in an inventory more than 30 tiles from a player will become disconnected
+- Compatibility with [Spidertron Enhancements](https://mods.factorio.com/mod/SpidertronEnhancements) is limited. Specifically, any ammo in inactive weapon slots is lost when using that mod's enter/exit vehicles feature 
 
 -----
 Translation

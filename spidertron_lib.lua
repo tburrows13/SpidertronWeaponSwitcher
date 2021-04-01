@@ -96,10 +96,10 @@ function spidertron_lib.serialise_spidertron(spidertron)
 
   serialised_data.driver_is_gunner = spidertron.driver_is_gunner
 
-  -- Eject players if any
-  local player = spidertron.get_driver()
-  if player then
-    serialised_data.player_occupied = player
+  local driver = spidertron.get_driver()
+  if driver then
+    serialised_data.driver = driver
+    serialised_data.walking_state = driver.walking_state
   end
 
   local passenger = spidertron.get_passenger()
@@ -187,16 +187,17 @@ function spidertron_lib.serialise_spidertron(spidertron)
     end
   end
   serialised_data.players_with_gui_open = players_with_gui_open
-  
 
   return serialised_data
 end
 
 
-function spidertron_lib.deserialise_spidertron(spidertron, serialised_data, reopen_guis)
+function spidertron_lib.deserialise_spidertron(spidertron, serialised_data, transfer_player_state)
   -- Copy all data in serialised_data into spidertron
   -- Set `serialised_data` fields to `nil` to prevent that attribute of `spidertron` being overwritten
 
+  -- transfer_player_state keeps driver/passenger in spidertron, player.opened and player.walking_state intact
+  -- and should be used when the mod is serialising and deserialising the spidertron on the same tick
 
   -- Copy across generic attributes
   for _, attribute in pairs{"force",
@@ -222,25 +223,6 @@ function spidertron_lib.deserialise_spidertron(spidertron, serialised_data, reop
     for _, position in pairs(autopilot_destinations) do
       spidertron.add_autopilot_destination(position)
     end
-  end
-
-  -- Copy across driving state
-  local player = serialised_data.player_occupied
-  if player and player.valid then
-    spidertron.set_driver(player)
-  end
-  -- `spidertron` could be invalid here because `.set_driver` raises an event that other mods can react to
-  if not spidertron.valid then
-    return  -- Will probably still crash calling function...
-  end
-
-  local passenger = serialised_data.passenger
-  if passenger and passenger.valid then
-    spidertron.set_passenger(passenger)
-  end
-  -- Same check again here
-  if not spidertron.valid then
-    return
   end
 
   local driver_is_gunner = serialised_data.driver_is_gunner
@@ -332,15 +314,43 @@ function spidertron_lib.deserialise_spidertron(spidertron, serialised_data, reop
     end
   end
 
-  local players_with_gui_open = serialised_data.players_with_gui_open
-  if reopen_guis and players_with_gui_open then
-    -- Reopen the new GUI for players that had the old one open
-    for _, player in pairs(players_with_gui_open) do
-      if player.valid then
-        player.opened = spidertron
+  if transfer_player_state then
+    -- Copy across driving state
+    local driver = serialised_data.driver or serialised_data.player_occupied  -- Legacy
+    -- driver is a character, not player
+    if driver and driver.valid then
+      spidertron.set_driver(driver)
+    end
+    -- `spidertron` could be invalid here because `.set_driver` raises an event that other mods can react to
+    if not spidertron.valid then
+      return  -- Will probably still crash calling function...
+    end
+
+    local passenger = serialised_data.passenger
+    if passenger and passenger.valid then
+      spidertron.set_passenger(passenger)
+    end
+    -- Same check again here
+    if not spidertron.valid then
+      return
+    end
+
+    local walking_state = serialised_data.walking_state
+    if driver and driver.valid and walking_state then
+      driver.player.walking_state = walking_state
+    end
+
+    local players_with_gui_open = serialised_data.players_with_gui_open
+    if players_with_gui_open then
+      -- Reopen the new GUI for players that had the old one open
+      for _, player in pairs(players_with_gui_open) do
+        if player.valid then
+          player.opened = spidertron
+        end
       end
     end
   end
+
 end
 
 return spidertron_lib

@@ -1,8 +1,8 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.2.3
-Date: ???
+Date: 1 April 2021
   Features:
-    - Spidertron name and modded spidertron fuel (e.g. Krastorio2) is now saved when switching weapons
+    - Spidertron name, walking state, and modded spidertron fuel (e.g. Krastorio2) are now saved when switching weapons
 ---------------------------------------------------------------------------------------------------
 Version: 1.2.2
 Date: 7 January 2021
