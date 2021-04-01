@@ -2,8 +2,6 @@ local function create_variations(spidertron_name, weapon_list)
     local spidertron = data.raw["spider-vehicle"][spidertron_name]
     spidertron.fast_replaceable_group = "sws-group-" .. spidertron_name
 
-    local spidertron_item = data.raw["item-with-entity-data"]["spidertron"]
-
     local names = {}
     for _, weapon in pairs(weapon_list) do
         if weapon ~= "" then
@@ -13,16 +11,15 @@ local function create_variations(spidertron_name, weapon_list)
             spidertron_variation.guns = {weapon, weapon, weapon, weapon}
             table.insert(names, name)
 
-            local spidertron_variation_item = table.deepcopy(spidertron_item)
-            spidertron_variation_item.name = name
-            spidertron_variation_item.place_result = name
-            spidertron_variation_item.flags = {"hidden"}
-
-            data:extend{spidertron_variation, spidertron_variation_item}
+            data:extend{spidertron_variation}
         else
             table.insert(names, spidertron_name)
         end
     end
+
+    -- Stops item name becoming "Rocket Launcher Spidertron"
+    data.raw["item-with-entity-data"][spidertron_name].localised_name = {"item-name." .. spidertron_name}
+
     return names
 end
 

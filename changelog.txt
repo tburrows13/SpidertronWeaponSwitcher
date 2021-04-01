@@ -3,6 +3,8 @@ Version: 1.2.3
 Date: 1 April 2021
   Features:
     - Spidertron name, walking state, and modded spidertron fuel (e.g. Krastorio2) are now saved when switching weapons
+  Changes:
+    - Spidertron item is now called "Spidertron" instead of "Rocket Launcher Spidertron"
 ---------------------------------------------------------------------------------------------------
 Version: 1.2.2
 Date: 7 January 2021
