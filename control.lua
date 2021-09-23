@@ -47,7 +47,6 @@ local function replace_spidertron(previous_spidertron, name)
     -- Perhaps the spidertron was placed before the mod was initialised
     ammo_data = {}
   end
-  global.spidertron_saved_data[previous_spidertron.unit_number] = {}  -- TODO remove?
 
   -- Save previous_spidertron ammo
   local ammo = spidertron_lib.copy_inventory(previous_spidertron.get_inventory(defines.inventory.spider_ammo)).inventory
@@ -133,18 +132,6 @@ script.on_event("switch-spidertron-weapons",
   end
 )
 
-script.on_event(defines.events.on_built_entity,
-  function(event)
-    log("Spidertron Alt built")
-    local spidertron = event.created_entity
-    if get_next_name(spidertron.name) then
-      -- Checks that it is a spidertron that we care about
-      global.spidertron_saved_data[spidertron.unit_number] = {}
-    end
-  end,
-  {{filter = "type", type = "spider-vehicle"}}
-)
-
 script.on_event(defines.events.on_player_mined_entity,
   function(event)
     local player = game.get_player(event.player_index)
@@ -155,9 +142,12 @@ script.on_event(defines.events.on_player_mined_entity,
       -- Checks that it is a spidertron that we care about
       log("Player " .. player.name .. " mined spidertron")
 
-      for spidertron_name, ammo_inventory in pairs(global.spidertron_saved_data[spidertron.unit_number]) do
-        for i = 1, #ammo_inventory do
-          buffer.insert(ammo_inventory[i])
+      ammo_data = global.spidertron_saved_data[spidertron.unit_number]
+      if ammo_data then
+        for _, ammo_inventory in pairs(ammo_data) do
+          for i = 1, #ammo_inventory do
+            buffer.insert(ammo_inventory[i])
+          end
         end
       end
     end

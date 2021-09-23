@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.2.4
+Date: 23 September 2021
+  Bugfixes:
+    - Fixed crash when mining a spidertron that was not directly placed by the player or was placed before adding this mod
+---------------------------------------------------------------------------------------------------
 Version: 1.2.3
 Date: 1 April 2021
   Features:
