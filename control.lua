@@ -126,6 +126,8 @@ script.on_event("switch-spidertron-weapons",
 
       spidertron.destroy()
 
+      player.play_sound{path = "utility/switch_gun"}
+
     else
       log("No next name found for spidertron " .. spidertron.name)
     end
