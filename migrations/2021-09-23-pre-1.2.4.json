@@ -1,0 +1,9 @@
+{
+  "entity":
+  [
+    ["sws-spidertron-tank-cannon", "sws-spidertron-spidertron-cannon"],
+    ["sws-spidertronmk2-tank-cannon", "sws-spidertronmk2-sws-cannon-mk2"],
+    ["sws-spidertronmk3-tank-cannon", "sws-spidertronmk3-sws-cannon-mk3"]
+  ]
+}
+  

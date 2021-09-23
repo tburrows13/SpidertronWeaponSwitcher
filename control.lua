@@ -10,22 +10,22 @@ SWITCH_CHAINS = {
   "sws-spidertron-spidertron-shotgun",
   "sws-spidertron-spidertron-flamethrower",
   "spidertron",
-  "sws-spidertron-tank-cannon"
+  "sws-spidertron-spidertron-cannon"
 },{
   "sws-spidertronmk2-sws-machine-gun-mk2",
   "sws-spidertronmk2-sws-shotgun-mk2",
   "sws-spidertronmk2-sws-flamethrower-mk2",
   "spidertronmk2",
-  "sws-spidertronmk2-tank-cannon"
+  "sws-spidertronmk2-sws-cannon-mk2"
 },{
   "sws-spidertronmk3-sws-machine-gun-mk3",
   "sws-spidertronmk3-sws-shotgun-mk3",
   "sws-spidertronmk3-sws-flamethrower-mk3",
   "spidertronmk3",
-  "sws-spidertronmk3-tank-cannon"
+  "sws-spidertronmk3-sws-cannon-mk3"
 }}
 
-on_spidertron_switched = script.generate_event_name()  -- Called
+on_spidertron_switched = script.generate_event_name()
 remote.add_interface("SpidertronWeaponSwitcher", {get_events = function() return {on_spidertron_switched = on_spidertron_switched} end})
 
 
@@ -224,6 +224,21 @@ local function config_changed_setup(changed_data)
     if old_version[2] < 2 then
       log("Running pre 1.2.0 migration")
       global.spidertron_follow_list = {}
+    end
+    if old_version[2] < 2 or (old_version[2] == 2 and old_version[3] < 4) then
+      log(serpent.block(global.spidertron_saved_data))
+      log("Running pre 1.2.4 migration")
+      local name_changes = {["sws-spidertron-tank-cannon"] = "sws-spidertron-spidertron-cannon",
+                            ["sws-spidertronmk2-tank-cannon"] = "sws-spidertronmk2-sws-cannon-mk2",
+                            ["sws-spidertronmk3-tank-cannon"] = "sws-spidertronmk3-sws-cannon-mk3",
+      }
+      for _, ammo_data in pairs(global.spidertron_saved_data) do
+        for old_name, new_name in pairs(name_changes) do
+          ammo_data[new_name] = ammo_data[old_name]
+          ammo_data[old_name] = nil
+        end
+      end
+      log(serpent.block(global.spidertron_saved_data))
     end
   end
 end

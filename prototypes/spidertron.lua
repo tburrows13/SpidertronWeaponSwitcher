@@ -23,13 +23,13 @@ local function create_variations(spidertron_name, weapon_list)
     return names
 end
 
-local spidertron_names = create_variations("spidertron", {"spidertron-machine-gun", "spidertron-shotgun", "spidertron-flamethrower", "", "tank-cannon"})
+local spidertron_names = create_variations("spidertron", {"spidertron-machine-gun", "spidertron-shotgun", "spidertron-flamethrower", "", "spidertron-cannon"})
 log(serpent.block(spidertron_names))
 
 if mods["spidertron-extended"] then
-    local mk2_names = create_variations("spidertronmk2", {"sws-machine-gun-mk2", "sws-shotgun-mk2", "sws-flamethrower-mk2", "", "tank-cannon"})
+    local mk2_names = create_variations("spidertronmk2", {"sws-machine-gun-mk2", "sws-shotgun-mk2", "sws-flamethrower-mk2", "", "sws-cannon-mk2"})
     log(serpent.block(mk2_names))
-    local mk3_names = create_variations("spidertronmk3", {"sws-machine-gun-mk3", "sws-shotgun-mk3", "sws-flamethrower-mk3", "", "tank-cannon"})
+    local mk3_names = create_variations("spidertronmk3", {"sws-machine-gun-mk3", "sws-shotgun-mk3", "sws-flamethrower-mk3", "", "sws-cannon-mk3"})
     log(serpent.block(mk3_names))
 
 end
