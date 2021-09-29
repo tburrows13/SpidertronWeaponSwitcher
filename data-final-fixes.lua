@@ -10,7 +10,7 @@ local spider_leg_mask = collision_mask_util.get_default_mask("spider-leg")
 
 local prototypes = collision_mask_util.collect_prototypes_colliding_with_mask(spider_leg_mask)
 
--- Tiles aren't found by collect_prototypes_colliding_with_mask, and also must contain collision_mask
+-- Tiles aren't found by collect_prototypes_colliding_with_mask, and also are guaranteed to contain collision_mask
 for _, prototype in pairs(data.raw["tile"]) do
   local tile_mask = prototype.collision_mask
   if collision_mask_util.masks_collide(tile_mask, spider_leg_mask) then
@@ -24,6 +24,6 @@ for _, prototype in pairs(prototypes) do
     insert(mask, spider_leg_layer)
     prototype.collision_mask = mask
   else
-    prototype.collision_mask = {spider_leg_layer, "water-tile"}  -- Temporary workaround for https://forums.factorio.com/viewtopic.php?f=7&t=100132
+    prototype.collision_mask = {spider_leg_layer, "water-tile"}  -- water-tile is temporary workaround for https://forums.factorio.com/viewtopic.php?f=7&t=100132
   end
 end
