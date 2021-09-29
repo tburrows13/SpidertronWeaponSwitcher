@@ -3,8 +3,8 @@ machinegun.name = "spidertron-machine-gun"
 machinegun.attack_parameters.range = 20
 machinegun.attack_parameters.damage_modifier = 2
 machinegun.attack_parameters.cooldown = 3
-machinegun.attack_parameters.gun_barrel_length = 0
-machinegun.attack_parameters.gun_center_shift = {0, 0}
+machinegun.attack_parameters.projectile_creation_distance = -0.5
+machinegun.attack_parameters.projectile_center = {0, 0.3}
 
 local machinegunmk2 = table.deepcopy(machinegun)
 machinegunmk2.name = "sws-machine-gun-mk2"
@@ -23,8 +23,8 @@ shotgun.flags = {"hidden"}
 shotgun.stack_size = 1
 shotgun.attack_parameters.range = 20
 shotgun.attack_parameters.damage_modifier = 2
-shotgun.attack_parameters.gun_barrel_length = 0
-shotgun.attack_parameters.gun_center_shift = {0, 0}
+shotgun.attack_parameters.projectile_creation_distance = -0.5
+shotgun.attack_parameters.projectile_center = {0, 0.3}
 
 local shotgunmk2 = table.deepcopy(shotgun)
 shotgunmk2.name = "sws-shotgun-mk2"
@@ -61,10 +61,11 @@ data:extend{flamethrower, flamethrowermk2, flamethrowermk3}
 local tank_cannon = data.raw["gun"]["tank-cannon"]
 tank_cannon.stack_size = 1
 tank_cannon.attack_parameters.range = 30  -- This is the actual default: https://forums.factorio.com/viewtopic.php?p=553494#p553494
+
 local cannon = table.deepcopy(tank_cannon)  -- Default range = 30
 cannon.name = "spidertron-cannon"
-machinegun.attack_parameters.gun_barrel_length = 0
-machinegun.attack_parameters.gun_center_shift = {0, 0}
+cannon.attack_parameters.projectile_creation_distance = -0.5
+cannon.attack_parameters.projectile_center = {0, 0.3}
 
 local cannonmk2 = table.deepcopy(cannon)
 cannonmk2.name = "sws-cannon-mk2"
