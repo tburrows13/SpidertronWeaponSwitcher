@@ -69,7 +69,7 @@ cannon.attack_parameters.projectile_center = {0, 0.3}
 
 local cannonmk2 = table.deepcopy(cannon)
 cannonmk2.name = "sws-cannon-mk2"
-cannonmk2.attack_parameters.range = 35
+cannonmk2.attack_parameters.range = 40
 
 local cannonmk3 = table.deepcopy(cannon)
 cannonmk3.name = "sws-cannon-mk3"
