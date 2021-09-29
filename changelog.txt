@@ -1,9 +1,9 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.2.4
-Date: 23 September 2021
+Date: 29 September 2021
   Features:
-    - Plays sound when switching weapons
     - Added MK2 and MK3 cannons with increased range when playing with Spidertron Extended
+    - Plays sound when switching weapons
   Bugfixes:
     - Fixed cannon shells sometimes colliding with spidertron legs
     - Fixed rare crash when mining a spidertron that was not directly placed by the player or was placed before adding this mod
