@@ -4,7 +4,8 @@ Date: 23 September 2021
   Features:
     - Plays sound when switching weapons
   Bugfixes:
-    - Fixed crash when mining a spidertron that was not directly placed by the player or was placed before adding this mod
+    - Fixed cannon shells sometimes colliding with spidertron legs
+    - Fixed rare crash when mining a spidertron that was not directly placed by the player or was placed before adding this mod
 ---------------------------------------------------------------------------------------------------
 Version: 1.2.3
 Date: 1 April 2021
