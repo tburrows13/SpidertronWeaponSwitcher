@@ -20,6 +20,7 @@ data:extend{machinegun, machinegunmk2, machinegunmk3}
 local shotgun = table.deepcopy(data.raw["gun"]["combat-shotgun"])
 shotgun.name = "spidertron-shotgun"
 shotgun.flags = {"hidden"}
+shotgun.stack_size = 1
 shotgun.attack_parameters.range = 20
 shotgun.attack_parameters.damage_modifier = 2
 shotgun.attack_parameters.gun_barrel_length = 0
@@ -57,7 +58,10 @@ flamethrowermk3.attack_parameters.range = 40
 data:extend{flamethrower, flamethrowermk2, flamethrowermk3}
 
 
-local cannon = table.deepcopy(data.raw["gun"]["tank-cannon"])  -- Default range = 25
+local tank_cannon = data.raw["gun"]["tank-cannon"]
+tank_cannon.stack_size = 1
+tank_cannon.attack_parameters.range = 30  -- This is the actual default: https://forums.factorio.com/viewtopic.php?p=553494#p553494
+local cannon = table.deepcopy(tank_cannon)  -- Default range = 30
 cannon.name = "spidertron-cannon"
 machinegun.attack_parameters.gun_barrel_length = 0
 machinegun.attack_parameters.gun_center_shift = {0, 0}
@@ -85,5 +89,4 @@ for i = 1, 4 do
   if mk3 then
     mk3.localised_name = {"item-name.spidertron-rocket-launcher-mk3"}
   end
-
 end
