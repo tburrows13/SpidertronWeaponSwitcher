@@ -14,7 +14,14 @@ local machinegunmk3 = table.deepcopy(machinegun)
 machinegunmk3.name = "sws-machine-gun-mk3"
 machinegunmk3.attack_parameters.range = 40
 
-data:extend{machinegun, machinegunmk2, machinegunmk3}
+local machinegun_spiderling = table.deepcopy(machinegun)
+machinegun_spiderling.name = "sws-machine-gun-spiderling"
+machinegun_spiderling.attack_parameters.projectile_creation_distance = 0
+machinegun_spiderling.attack_parameters.projectile_center = {0, 0}
+machinegun_spiderling.attack_parameters.range = 12
+machinegun_spiderling.attack_parameters.cooldown = 6
+
+data:extend{machinegun, machinegunmk2, machinegunmk3, machinegun_spiderling}
 
 
 local shotgun = table.deepcopy(data.raw["gun"]["combat-shotgun"])
@@ -36,7 +43,14 @@ shotgunmk3.name = "sws-shotgun-mk3"
 shotgunmk3.flags = {"hidden"}
 shotgunmk3.attack_parameters.range = 40
 
-data:extend{shotgun, shotgunmk2, shotgunmk3}
+local shotgun_spiderling = table.deepcopy(shotgun)
+shotgun_spiderling.name = "sws-shotgun-spiderling"
+shotgun_spiderling.attack_parameters.projectile_creation_distance = 0
+shotgun_spiderling.attack_parameters.projectile_center = {0, 0}
+shotgun_spiderling.attack_parameters.range = 12
+shotgun_spiderling.attack_parameters.cooldown = 60
+
+data:extend{shotgun, shotgunmk2, shotgunmk3, shotgun_spiderling}
 
 
 local flamethrower = table.deepcopy(data.raw["gun"]["tank-flamethrower"])
@@ -55,7 +69,12 @@ local flamethrowermk3 = table.deepcopy(flamethrower)
 flamethrowermk3.name = "sws-flamethrower-mk3"
 flamethrowermk3.attack_parameters.range = 40
 
-data:extend{flamethrower, flamethrowermk2, flamethrowermk3}
+local flamethrower_spiderling = table.deepcopy(flamethrower)
+flamethrower_spiderling.name = "sws-flamethrower-spiderling"
+flamethrower_spiderling.attack_parameters.range = 12
+flamethrower_spiderling.attack_parameters.cooldown = 2
+
+data:extend{flamethrower, flamethrowermk2, flamethrowermk3, flamethrower_spiderling}
 
 
 local tank_cannon = data.raw["gun"]["tank-cannon"]
@@ -75,7 +94,14 @@ local cannonmk3 = table.deepcopy(cannon)
 cannonmk3.name = "sws-cannon-mk3"
 cannonmk3.attack_parameters.range = 50
 
-data:extend{cannon, cannonmk2, cannonmk3}
+local cannon_spiderling = table.deepcopy(cannon)
+cannon_spiderling.name = "sws-cannon-spiderling"
+cannon_spiderling.attack_parameters.projectile_creation_distance = 0
+cannon_spiderling.attack_parameters.projectile_center = {0, 0}
+cannon_spiderling.attack_parameters.range = 20
+cannon_spiderling.attack_parameters.cooldown = 180
+
+data:extend{cannon, cannonmk2, cannonmk3, cannon_spiderling}
 
 -- Rename spidertron-extended's MK2&3 rocket launcher's to be consistent with SWS's gun names
 local mk2_name = "spidertronmk2-rocket-launcher-"

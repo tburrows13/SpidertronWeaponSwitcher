@@ -23,6 +23,12 @@ SWITCH_CHAINS = {
   "sws-spidertronmk3-sws-flamethrower-mk3",
   "spidertronmk3",
   "sws-spidertronmk3-sws-cannon-mk3"
+},{
+  "sws-sp-spiderling-sws-machine-gun-spiderling",
+  "sws-sp-spiderling-sws-shotgun-spiderling",
+  "sws-sp-spiderling-sws-flamethrower-spiderling",
+  "sp-spiderling",
+  "sws-sp-spiderling-sws-cannon-spiderling"
 }}
 
 on_spidertron_switched = script.generate_event_name()

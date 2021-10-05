@@ -8,7 +8,13 @@ local function create_variations(spidertron_name, weapon_list)
             local spidertron_variation = table.deepcopy(spidertron)
             local name = "sws-" .. spidertron_name .. "-" .. weapon
             spidertron_variation.name = name
-            spidertron_variation.guns = {weapon, weapon, weapon, weapon}
+
+            local gun_array = {}
+            for _ = 1, #spidertron.guns do
+                table.insert(gun_array, weapon)
+            end
+            spidertron_variation.guns = gun_array
+
             table.insert(names, name)
 
             data:extend{spidertron_variation}
@@ -31,5 +37,9 @@ if mods["spidertron-extended"] then
     log(serpent.block(mk2_names))
     local mk3_names = create_variations("spidertronmk3", {"sws-machine-gun-mk3", "sws-shotgun-mk3", "sws-flamethrower-mk3", "", "sws-cannon-mk3"})
     log(serpent.block(mk3_names))
+end
 
+if mods["SpidertronPatrols"] and data.raw["spider-vehicle"]["sp-spiderling"] then
+    local spiderling_names = create_variations("sp-spiderling", {"sws-machine-gun-spiderling", "sws-shotgun-spiderling", "sws-flamethrower-spiderling", "", "sws-cannon-spiderling"})
+    log(serpent.block(spiderling_names))
 end
