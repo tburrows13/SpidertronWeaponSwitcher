@@ -5,12 +5,14 @@ local insert = table.insert
 -- Add an extra layer to every prototype with collision mask of player-layer or rail-layer except spider-leg
 -- Replace spider-leg's masks with just spider_leg_layer
 
-local spider_leg_layers = {"water-tile"}  -- water-tile is temporary workaround for https://forums.factorio.com/viewtopic.php?f=7&t=100132
+local spider_leg_layers = {}  -- water-tile is temporary workaround for https://forums.factorio.com/viewtopic.php?f=7&t=100132
 
 if mods["space-exploration"] then
   insert(spider_leg_layers, "object-layer")
 end
 
+log(serpent.block(collision_mask_util.get_default_mask("spider-leg")))
+log(serpent.block(collision_mask_util.get_mask(data.raw["spider-leg"]["spidertron-leg-1"])))
 for _, layer in pairs(collision_mask_util.get_default_mask("spider-leg")) do
   local spider_leg_layer = collision_mask_util.get_first_unused_layer()
   insert(spider_leg_layers, spider_leg_layer)
