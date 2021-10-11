@@ -77,11 +77,7 @@ flamethrower_spiderling.attack_parameters.cooldown = 2
 data:extend{flamethrower, flamethrowermk2, flamethrowermk3, flamethrower_spiderling}
 
 
-local tank_cannon = data.raw["gun"]["tank-cannon"]
-tank_cannon.stack_size = 1
-tank_cannon.attack_parameters.range = 30  -- This is the actual default: https://forums.factorio.com/viewtopic.php?p=553494#p553494
-
-local cannon = table.deepcopy(tank_cannon)  -- Default range = 30
+local cannon = table.deepcopy(data.raw["gun"]["tank-cannon"])  -- Default range = 30
 cannon.name = "spidertron-cannon"
 cannon.attack_parameters.projectile_creation_distance = -0.5
 cannon.attack_parameters.projectile_center = {0, 0.3}
