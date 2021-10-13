@@ -1,7 +1,7 @@
 Spidertron Weapon Switcher
 ==================
 
-If you've been wanting the spidertron to fire more than just rockets, this is the mod for you! It now contains machine guns, shotguns, flamethrowers, cannons and rocket launchers.
+If you've been wanting your spidertrons to fire more than just rockets, this is the mod for you! They now contain machine guns, shotguns, flamethrowers, cannons and rocket launchers.
 
 ![Demonstration gif](https://i.imgur.com/hdvItFc.gif)
 
@@ -10,10 +10,8 @@ Features
 -----
 
 - Press *Control + Tab* (or *\\* ) whilst in a spidertron or whilst hovering over one with the mouse to rotate through 5 different weapon options
-- Ammo is saved between weapons, so you can rotate back to a weapon and its ammo will still be there
-- Machine gun, shotgun and flamethrower have all been given their own 'spidertron version' with increased range and damage compared to normal
-- Tank cannon and rocket launcher have the same stats as when fired from a tank and a spidertron respectively
-- Supports MK2 & MK3 spidertrons from [Spidertron Extended](https://mods.factorio.com/mod/spidertron-extended)
+- Machine gun, shotgun, cannon and flamethrower have all been given their own 'spidertron version' with increased range and damage compared to normal
+- Supports MK2 & MK3 spidertrons from [Spidertron Extended](https://mods.factorio.com/mod/spidertron-extended) and spiderling from [Spidertron Patrols](https://mods.factorio.com/mod/SpidertronPatrols)
 
 -----
 Limitations
@@ -47,4 +45,4 @@ Let me know if you plan on using this and I can help you with debugging or addin
 -----
 
 If you have specific weapons from other mods that you'd like added into the weapon rotation, let me know!
-Check out my other mods: [Spidertron Waypoints](https://mods.factorio.com/mod/SpidertronWaypoints) and [Spidertron Engineer](https://mods.factorio.com/mod/SpidertronEngineer)
+Check out my other mods: [Spidertron Patrols](https://mods.factorio.com/mod/SpidertronPatrols) and [Spidertron Enhancements](https://mods.factorio.com/mod/SpidertronEnhancements)

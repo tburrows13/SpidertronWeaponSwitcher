@@ -1,8 +1,10 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.2.6
-Date: ???
+Date: 14 October 2021
   Features:
     - Added switching support for spiderling from Spidertron Patrols
+  Bugfixes:
+    - Fixed spidertrons being unable to walk on shallow water
 ---------------------------------------------------------------------------------------------------
 Version: 1.2.5
 Date: 30 September 2021
