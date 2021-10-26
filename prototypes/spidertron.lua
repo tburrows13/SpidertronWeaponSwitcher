@@ -3,6 +3,8 @@
 local function create_variations(spidertron_name, weapon_list)
     local spidertron = data.raw["spider-vehicle"][spidertron_name]
     spidertron.fast_replaceable_group = "sws-group-" .. spidertron_name
+    spidertron.localised_description = {"entity-description.sws-spidertron"}
+
 
     local create_alternate_items = settings.startup["sws-show-alternate-items"].value
     local technologies = {}
