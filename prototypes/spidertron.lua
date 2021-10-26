@@ -1,6 +1,23 @@
+
+
 local function create_variations(spidertron_name, weapon_list)
     local spidertron = data.raw["spider-vehicle"][spidertron_name]
     spidertron.fast_replaceable_group = "sws-group-" .. spidertron_name
+
+    local create_alternate_items = settings.startup["sws-show-alternate-items"].value
+    local technologies = {}
+    if create_alternate_items then
+        -- Find the technologies that will need to be updated
+        for name, technology in pairs(data.raw["technology"]) do
+            if technology.effects then
+                for _, effect in pairs(technology.effects) do
+                    if effect.type == "unlock-recipe" and effect.recipe == spidertron_name then
+                        table.insert(technologies, technology)
+                    end
+                end
+            end
+        end
+    end
 
     local names = {}
     for _, weapon in pairs(weapon_list) do
@@ -15,8 +32,29 @@ local function create_variations(spidertron_name, weapon_list)
             end
             spidertron_variation.guns = gun_array
 
-            table.insert(names, name)
+            if create_alternate_items then
+                -- Create alternate spidertron item and recipe
+                local item = table.deepcopy(data.raw["item-with-entity-data"][spidertron_name])
+                item.name = name
+                item.place_result = name
 
+                local recipe = table.deepcopy(data.raw["recipe"][spidertron_name])
+                recipe.name = name
+                recipe.result = name
+
+                data:extend{item, recipe}
+
+                -- Add recipe to the relevant technologies
+                for _, technology in pairs(technologies) do
+                    table.insert(technology.effects, {type = "unlock-recipe", recipe = name})
+                end
+
+                if spidertron_variation.minable and spidertron_variation.minable.result == spidertron_name then
+                    spidertron_variation.minable.result = name
+                end
+            end
+
+            table.insert(names, name)
             data:extend{spidertron_variation}
         else
             table.insert(names, spidertron_name)

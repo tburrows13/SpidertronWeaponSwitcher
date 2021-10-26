@@ -191,6 +191,10 @@ script.on_init(
 )
 
 local function config_changed_setup(changed_data)
+  for _, force in pairs(game.forces) do
+    force.reset_technology_effects()
+  end
+
   -- Only run when this mod was present in the previous save as well. Otherwise, on_init will run.
   local mod_changes = changed_data.mod_changes
   local old_version
