@@ -1,6 +1,6 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.2.7
-Date: ???
+Date: 26 October 2021
   Features:
     - Added optional setting to add items and recipes for each spidertron+weapon combination
   Changes:
