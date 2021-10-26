@@ -7,6 +7,12 @@ local ranges = {["cannon-shell"] = 50,
                 ["shotgun-shell"] = 40,
 }
 
+local vanilla_shells = {["cannon-shell"] = true,
+                        ["explosive-cannon-shell"] = true,
+                        ["uranium-cannon-shell"] = true,
+                        ["explosive-uranium-cannon-shell"] = true,
+}
+
 local function deal_with_action_delivery(action_delivery, range)
   if action_delivery.type == "projectile" then
     if range > (action_delivery.max_range or 1000) then
@@ -33,9 +39,9 @@ local function deal_with_action(action, range)
 
 end
 
-local function deal_with_ammo_type(ammo_type)
+local function deal_with_ammo_type(ammo_type, ammo_name)
   local range = ranges[ammo_type.category]
-  if range then
+  if range and (not ammo_type.category == "cannon-shell" or vanilla_shells[ammo_name]) then
     if ammo_type.target_type == "direction" then
       ammo_type.target_type = "position"
       ammo_type.clamp_position = true
@@ -55,12 +61,13 @@ end
 
 for _, prototype in pairs(data.raw["ammo"]) do
   local ammo_type = prototype.ammo_type
+  local ammo_name = prototype.name
   if ammo_type.category then
-    deal_with_ammo_type(ammo_type)
+    deal_with_ammo_type(ammo_type, ammo_name)
   elseif ammo_type[1] then
     -- ammo_type is an array
     for _, individual_ammo_type in pairs(ammo_type) do
-      deal_with_ammo_type(individual_ammo_type)
+      deal_with_ammo_type(individual_ammo_type, ammo_name)
     end
   end
 end

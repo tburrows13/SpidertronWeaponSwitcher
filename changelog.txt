@@ -3,6 +3,8 @@ Version: 1.2.7
 Date: ???
   Features:
     - Added optional setting to add items and recipes for each spidertron+weapon combination
+  Changes:
+    - Cannon shell range overrides now only apply to vanilla shells
 ---------------------------------------------------------------------------------------------------
 Version: 1.2.6
 Date: 14 October 2021
