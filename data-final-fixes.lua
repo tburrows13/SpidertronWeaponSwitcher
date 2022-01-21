@@ -2,44 +2,32 @@ local collision_mask_util = require("__core__.lualib.collision-mask-util")
 local insert = table.insert
 
 -- Stop cannon-projectile colliding with spider-legs
--- Add an extra layer to every prototype with collision mask of player-layer or rail-layer except spider-leg
--- Replace spider-leg's masks with just spider_leg_layer
+-- Spider-legs default mask = {"player-layer", "rail-layer"}; With SE = {"player-layer", "rail-layer", "water-layer", "object-layer"}
+-- Projectile's default hit_collision_mask = {"player-layer", "train-layer"}; With SE = same
+-- Add an extra layer to every prototype with collision mask of player-layer except spider-leg
 
-local spider_leg_layers = collision_mask_util.get_default_mask("spider-leg")
-local spider_leg_alt_layers = {}
+local collision_layer = "player-layer"  -- In both spider-legs and projectiles
+local spider_leg_layer = collision_mask_util.get_first_unused_layer()
 
-if mods["space-exploration"] then
-  insert(spider_leg_layers, "object-layer")
-end
+local prototypes = collision_mask_util.collect_prototypes_with_layer(collision_layer)
 
-log(serpent.block(collision_mask_util.get_default_mask("spider-leg")))
-log(serpent.block(collision_mask_util.get_mask(data.raw["spider-leg"]["spidertron-leg-1"])))
-
-for _, layer in pairs(spider_leg_layers) do
-  local spider_leg_layer = collision_mask_util.get_first_unused_layer()
-  insert(spider_leg_alt_layers, spider_leg_layer)
-
-  local prototypes = collision_mask_util.collect_prototypes_with_layer(layer)
-
-  -- Tiles aren't found by collect_prototypes_colliding_with_mask, and also are guaranteed to contain collision_mask
-  for _, prototype in pairs(data.raw["tile"]) do
-    local tile_mask = prototype.collision_mask
-    if collision_mask_util.mask_contains_layer(tile_mask, layer) then
-      insert(prototypes, prototype)
-    end
-  end
-
-  for _, prototype in pairs(prototypes) do
-    if prototype.type ~= "spider-leg" then
-      local mask = collision_mask_util.get_mask(prototype)
-      insert(mask, spider_leg_layer)
-      prototype.collision_mask = mask
-    end
+-- Tiles aren't found by collect_prototypes_colliding_with_mask, and also are guaranteed to contain collision_mask
+for _, prototype in pairs(data.raw["tile"]) do
+  local tile_mask = prototype.collision_mask
+  if collision_mask_util.mask_contains_layer(tile_mask, collision_layer) then
+    insert(prototypes, prototype)
   end
 end
 
-for _, prototype in pairs(data.raw["spider-leg"]) do
-  prototype.collision_mask = spider_leg_alt_layers
+for _, prototype in pairs(prototypes) do
+  local prototype_mask = collision_mask_util.get_mask(prototype)
+  if prototype.type == "spider-leg" then
+    -- Remove collision_layer from leg prototypes
+    collision_mask_util.remove_layer(prototype_mask, collision_layer)
+  end
+  -- Add spider_leg_layer to all prototypes
+  insert(prototype_mask, spider_leg_layer)
+  prototype.collision_mask = prototype_mask
 end
 
 
