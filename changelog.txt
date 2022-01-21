@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.2.9
+Date: 21 Jan 2022
+  Changes:
+    - Simplified changes applied to collision masks to hopefully reduce chances of compatibility issues
+---------------------------------------------------------------------------------------------------
 Version: 1.2.8
 Date: 5 November 2021
   Bugfixes:

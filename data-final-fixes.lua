@@ -32,6 +32,7 @@ end
 
 
 -- The above collision mask changes make train selection priority lower than the track's
+-- May not be needed as of v1.2.9
 for _, type in pairs({"artillery-wagon", "cargo-wagon", "fluid-wagon", "locomotive", "car"}) do
   for _, prototype in pairs(data.raw[type]) do
     if not prototype.selection_priority or prototype.selection_priority == 50 then
