@@ -31,7 +31,7 @@ SWITCH_CHAINS = {
   "sws-sp-spiderling-sws-cannon-spiderling"
 }}
 
-local disable_weapon_switch = settings.startup["sws-disable-weapon-switch-whith-alt-recepies"].value
+local disable_weapon_switch = settings.startup["sws-disable-weapon-switch-whith-alt-recipes"].value
 local alternate_items = settings.startup["sws-show-alternate-items"].value
 
 on_spidertron_switched = script.generate_event_name()

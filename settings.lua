@@ -8,7 +8,7 @@ data:extend({
   },
   {
     type = "bool-setting",
-    name = "sws-disable-weapon-switch-whith-alt-recepies",
+    name = "sws-disable-weapon-switch-whith-alt-recipes",
     setting_type = "startup",
     default_value = true,
     order = "a"
