@@ -31,6 +31,9 @@ SWITCH_CHAINS = {
   "sws-sp-spiderling-sws-cannon-spiderling"
 }}
 
+local disable_weapon_switch = settings.startup["sws-disable-weapon-switch-whith-alt-recepies"].value
+local alternate_items = settings.startup["sws-show-alternate-items"].value
+
 on_spidertron_switched = script.generate_event_name()
 remote.add_interface("SpidertronWeaponSwitcher", {get_events = function() return {on_spidertron_switched = on_spidertron_switched} end})
 
@@ -81,64 +84,65 @@ local function replace_spidertron(previous_spidertron, name)
   return spidertron
 end
 
+if not (alternate_items and disable_weapon_switch) then
+  script.on_event("switch-spidertron-weapons",
+    function(event)
+      local player = game.get_player(event.player_index)
+      local spidertron
+      if player.selected and player.selected.type == "spider-vehicle" then
+        spidertron = player.selected
+      elseif player.vehicle and player.vehicle.type == "spider-vehicle" then
+        spidertron = player.vehicle
+      else
+        return
+      end
 
-script.on_event("switch-spidertron-weapons",
-  function(event)
-    local player = game.get_player(event.player_index)
-    local spidertron
-    if player.selected and player.selected.type == "spider-vehicle" then
-      spidertron = player.selected
-    elseif player.vehicle and player.vehicle.type == "spider-vehicle" then
-      spidertron = player.vehicle
-    else
-      return
-    end
+      local next_name = get_next_name(spidertron.name)
+      if next_name then
+        log("Switching from " .. spidertron.name .. " to " .. next_name)
+        local saved_data = spidertron_lib.serialise_spidertron(spidertron)
 
-    local next_name = get_next_name(spidertron.name)
-    if next_name then
-      log("Switching from " .. spidertron.name .. " to " .. next_name)
-      local saved_data = spidertron_lib.serialise_spidertron(spidertron)
+        local new_spidertron = replace_spidertron(spidertron, next_name)
 
-      local new_spidertron = replace_spidertron(spidertron, next_name)
+        -- Stop the deserialiser overwriting the ammo contents with what the spidertron previously had
+        saved_data.ammo = nil
+        spidertron_lib.deserialise_spidertron(new_spidertron, saved_data, true)
 
-      -- Stop the deserialiser overwriting the ammo contents with what the spidertron previously had
-      saved_data.ammo = nil
-      spidertron_lib.deserialise_spidertron(new_spidertron, saved_data, true)
-
-      -- Find and reconnect all following spidertrons.
-      -- Filter out ones that have since had their commands changed or cancelled
-      local follow_list = global.spidertron_follow_list[spidertron.unit_number]
-      if follow_list then
-        for i, follower in pairs(follow_list) do
-          if follower and follower.valid then
-            local follow_target = follower.follow_target
-            if follow_target and follow_target.valid and follow_target.unit_number == spidertron.unit_number then
-              -- If the follower still exists and it is still following the old spidertron, make it follow the new one
-              follower.follow_target = new_spidertron
-            else
-              follow_list[i] = nil
+        -- Find and reconnect all following spidertrons.
+        -- Filter out ones that have since had their commands changed or cancelled
+        local follow_list = global.spidertron_follow_list[spidertron.unit_number]
+        if follow_list then
+          for i, follower in pairs(follow_list) do
+            if follower and follower.valid then
+              local follow_target = follower.follow_target
+              if follow_target and follow_target.valid and follow_target.unit_number == spidertron.unit_number then
+                -- If the follower still exists and it is still following the old spidertron, make it follow the new one
+                follower.follow_target = new_spidertron
+              else
+                follow_list[i] = nil
+              end
             end
           end
         end
+        global.spidertron_follow_list[new_spidertron.unit_number] = follow_list
+        global.spidertron_follow_list[spidertron.unit_number] = nil
+
+        -- Raise event so that other mods can handle the change
+        script.raise_event(on_spidertron_switched, {old_spidertron = spidertron, new_spidertron = new_spidertron})
+
+        -- If changed spidertron was following another spidertron then we need to ensure that it has been added to the correct reverse lookup table
+        add_to_follow_list(new_spidertron)
+
+        spidertron.destroy()
+
+        player.play_sound{path = "utility/switch_gun"}
+
+      else
+        log("No next name found for spidertron " .. spidertron.name)
       end
-      global.spidertron_follow_list[new_spidertron.unit_number] = follow_list
-      global.spidertron_follow_list[spidertron.unit_number] = nil
-
-      -- Raise event so that other mods can handle the change
-      script.raise_event(on_spidertron_switched, {old_spidertron = spidertron, new_spidertron = new_spidertron})
-
-      -- If changed spidertron was following another spidertron then we need to ensure that it has been added to the correct reverse lookup table
-      add_to_follow_list(new_spidertron)
-
-      spidertron.destroy()
-
-      player.play_sound{path = "utility/switch_gun"}
-
-    else
-      log("No next name found for spidertron " .. spidertron.name)
     end
-  end
-)
+  )
+end
 
 script.on_event(defines.events.on_player_mined_entity,
   function(event)

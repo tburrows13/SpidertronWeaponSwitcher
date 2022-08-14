@@ -6,4 +6,11 @@ data:extend({
     default_value = false,
     order = "a"
   },
+  {
+    type = "bool-setting",
+    name = "sws-disable-weapon-switch-whith-alt-recepies",
+    setting_type = "startup",
+    default_value = true,
+    order = "a"
+  },
 })
