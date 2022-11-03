@@ -1,3 +1,16 @@
+local function fix_fuel_categories(spidertron)
+    if not spidertron then return end
+    local energy_source = spidertron.energy_source
+    -- Clean up fuel categories definition
+    if energy_source.fuel_category and not energy_source.fuel_categories then
+        energy_source.fuel_categories = {energy_source.fuel_category}
+        energy_source.fuel_category = nil
+    end
+    -- K2SE fuel categories fix, taken from space-exploration-postprocess
+    if mods["space-exploration"] and energy_source.fuel_categories then
+        table.insert(energy_source.fuel_categories, "nuclear")
+    end
+end
 
 
 local function create_variations(spidertron_name, weapon_list)
@@ -33,6 +46,8 @@ local function create_variations(spidertron_name, weapon_list)
                 table.insert(gun_array, weapon)
             end
             spidertron_variation.guns = gun_array
+
+            fix_fuel_categories(spidertron_variation)
 
             if create_alternate_items then
                 -- Create alternate spidertron item and recipe
@@ -77,6 +92,11 @@ if mods["spidertron-extended"] then
     log(serpent.block(mk2_names))
     local mk3_names = create_variations("spidertronmk3", {"sws-machine-gun-mk3", "sws-shotgun-mk3", "sws-flamethrower-mk3", "", "sws-cannon-mk3"})
     log(serpent.block(mk3_names))
+
+    fix_fuel_categories(data.raw["spider-vehicle"]["spidertronmk2"])
+    fix_fuel_categories(data.raw["spider-vehicle"]["spidertronmk3"])
+    fix_fuel_categories(data.raw["spider-vehicle"]["immolator"])
+    fix_fuel_categories(data.raw["spider-vehicle"]["spidertron-builder"])
 end
 
 if mods["SpidertronPatrols"] and data.raw["spider-vehicle"]["sp-spiderling"] then
