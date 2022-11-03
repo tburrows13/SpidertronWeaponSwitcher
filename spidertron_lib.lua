@@ -115,6 +115,7 @@ function spidertron_lib.serialise_spidertron(spidertron)
 
   serialised_data.vehicle_logistic_requests_enabled = spidertron.vehicle_logistic_requests_enabled
   serialised_data.enable_logistics_while_moving = spidertron.enable_logistics_while_moving
+  serialised_data.request_from_buffers = spidertron.request_from_buffers
   serialised_data.vehicle_automatic_targeting_parameters = spidertron.vehicle_automatic_targeting_parameters
 
   serialised_data.autopilot_destinations = spidertron.autopilot_destinations
@@ -207,6 +208,7 @@ function spidertron_lib.deserialise_spidertron(spidertron, serialised_data, tran
                             "entity_label",
                             "vehicle_logistic_requests_enabled",
                             "enable_logistics_while_moving",
+                            "request_from_buffers",
                             "vehicle_automatic_targeting_parameters",
                             "follow_target",
                             "follow_offset",
