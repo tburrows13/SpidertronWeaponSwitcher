@@ -96,7 +96,7 @@ script.on_event("switch-spidertron-weapons",
 
     local next_name = get_next_name(spidertron.name)
     if next_name then
-      log("Switching from " .. spidertron.name .. " to " .. next_name)
+      --log("Switching from " .. spidertron.name .. " to " .. next_name)
       local saved_data = spidertron_lib.serialise_spidertron(spidertron)
 
       local new_spidertron = replace_spidertron(spidertron, next_name)
@@ -148,7 +148,7 @@ script.on_event(defines.events.on_player_mined_entity,
 
     if get_next_name(spidertron.name) then
       -- Checks that it is a spidertron that we care about
-      log("Player " .. player.name .. " mined spidertron")
+      --log("Player " .. player.name .. " mined spidertron")
 
       ammo_data = global.spidertron_saved_data[spidertron.unit_number]
       if ammo_data then

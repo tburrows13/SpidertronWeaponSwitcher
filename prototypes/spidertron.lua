@@ -1,5 +1,6 @@
 local function fix_fuel_categories(spidertron)
     if not spidertron then return end
+    if not mods["space-exploration"] then return end
     local energy_source = spidertron.energy_source
     -- Clean up fuel categories definition
     if energy_source.fuel_category and not energy_source.fuel_categories then
@@ -7,7 +8,7 @@ local function fix_fuel_categories(spidertron)
         energy_source.fuel_category = nil
     end
     -- K2SE fuel categories fix, taken from space-exploration-postprocess
-    if mods["space-exploration"] and energy_source.fuel_categories then
+    if energy_source.fuel_categories then
         table.insert(energy_source.fuel_categories, "nuclear")
     end
 end

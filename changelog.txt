@@ -1,4 +1,15 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.2.10
+Date: 3 November 2022
+  Bugfixes:
+    - Fixed crash with Krastorio 2 depending on the load order
+    - Fixed spidertron variations not accepting nuclear fuel when using Krastorio 2 and Space Exploration
+    - "Request from buffer chests" checkbox value is now saved when switching weapons 
+    - Removed duplicate info icon in mod settings
+  Locale:
+    - Added complete Russian translations (thanks SeptiSe7en on Crowdin!)
+    - Added complete Ukrainian translations (thanks Met_en_Bouldry on Crowdin!)
+---------------------------------------------------------------------------------------------------
 Version: 1.2.9
 Date: 21 January 2022
   Changes:

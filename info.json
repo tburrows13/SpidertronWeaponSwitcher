@@ -1,6 +1,6 @@
 {
     "name": "SpidertronWeaponSwitcher",
-    "version": "1.2.9",
+    "version": "1.2.10",
     "title": "Spidertron Weapon Switcher",
     "author": "Xorimuth",
     "description": "Allows the Spidertron to fire any type of weapon by cycling through different loadouts with Control + Tab.",
