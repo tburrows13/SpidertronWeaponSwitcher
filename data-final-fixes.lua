@@ -24,6 +24,7 @@ for _, prototype in pairs(prototypes) do
   if prototype.type == "spider-leg" then
     -- Remove collision_layer from leg prototypes
     collision_mask_util.remove_layer(prototype_mask, collision_layer)
+    collision_mask_util.remove_layer(prototype_mask, "object-layer")  -- Overrides Combat mechanics overhaul adding it
   end
   -- Add spider_leg_layer to all prototypes
   insert(prototype_mask, spider_leg_layer)
