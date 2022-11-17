@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.2.11
+Date: 17 November 2022
+  Bugfixes:
+    - Fixed machine gun ammo and cannon shells colliding with spidertron legs when using Krastorio 2 and Combat mechanics overhaul
+---------------------------------------------------------------------------------------------------
 Version: 1.2.10
 Date: 3 November 2022
   Bugfixes:
