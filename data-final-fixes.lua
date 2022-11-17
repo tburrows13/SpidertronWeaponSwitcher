@@ -11,14 +11,6 @@ local spider_leg_layer = collision_mask_util.get_first_unused_layer()
 
 local prototypes = collision_mask_util.collect_prototypes_with_layer(collision_layer)
 
--- Tiles aren't found by collect_prototypes_colliding_with_mask, and also are guaranteed to contain collision_mask
-for _, prototype in pairs(data.raw["tile"]) do
-  local tile_mask = prototype.collision_mask
-  if collision_mask_util.mask_contains_layer(tile_mask, collision_layer) then
-    insert(prototypes, prototype)
-  end
-end
-
 for _, prototype in pairs(prototypes) do
   local prototype_mask = collision_mask_util.get_mask(prototype)
   if prototype.type == "spider-leg" then
