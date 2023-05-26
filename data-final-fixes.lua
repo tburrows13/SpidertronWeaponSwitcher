@@ -8,6 +8,7 @@ local insert = table.insert
 
 local collision_layer = "player-layer"  -- In both spider-legs and projectiles
 local spider_leg_layer = collision_mask_util.get_first_unused_layer()
+log("SWS spider_leg_layer assigned to " .. spider_leg_layer)
 
 local prototypes = collision_mask_util.collect_prototypes_with_layer(collision_layer)
 
