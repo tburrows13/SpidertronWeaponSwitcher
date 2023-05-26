@@ -20,6 +20,7 @@ local function create_variations(spidertron_name, weapon_list)
     if not spidertron.guns then return {} end
 
     spidertron.fast_replaceable_group = "sws-group-" .. spidertron_name
+    spidertron.localised_name = {"", "[item=" .. spidertron_icons[4] .. "] ", {"entity-name." .. spidertron_name}}
     spidertron.localised_description = {"entity-description.sws-spidertron"}
 
     local create_alternate_items = settings.startup["sws-show-alternate-items"].value
@@ -38,11 +39,12 @@ local function create_variations(spidertron_name, weapon_list)
     end
 
     local names = {}
-    for _, weapon in pairs(weapon_list) do
+    for i, weapon in pairs(weapon_list) do
         if weapon ~= "" then
             local spidertron_variation = table.deepcopy(spidertron)
             local name = "sws-" .. spidertron_name .. "-" .. weapon
             spidertron_variation.name = name
+            spidertron_variation.localised_name = {"", "[item=" .. spidertron_icons[i] .. "] ", {"entity-name." .. spidertron_name}}
 
             local gun_array = {}
             for _ = 1, #spidertron.guns do
@@ -56,10 +58,12 @@ local function create_variations(spidertron_name, weapon_list)
                 -- Create alternate spidertron item and recipe
                 local item = table.deepcopy(data.raw["item-with-entity-data"][spidertron_name])
                 item.name = name
+                item.localised_name = table.deepcopy(spidertron_variation.localised_name)
                 item.place_result = name
 
                 local recipe = table.deepcopy(data.raw["recipe"][spidertron_name])
                 recipe.name = name
+                recipe.localised_name = table.deepcopy(spidertron_variation.localised_name)
                 recipe.result = name
 
                 data:extend{item, recipe}
@@ -77,15 +81,24 @@ local function create_variations(spidertron_name, weapon_list)
             table.insert(names, name)
             data:extend{spidertron_variation}
         else
+            if create_alternate_items then
+                data.raw["item-with-entity-data"][spidertron_name].localised_name = table.deepcopy(spidertron.localised_name)
+                data.raw["recipe"][spidertron_name].localised_name = table.deepcopy(spidertron.localised_name)
+            end
             table.insert(names, spidertron_name)
         end
     end
 
-    -- Stops item name becoming "Rocket Launcher Spidertron"
-    data.raw["item-with-entity-data"][spidertron_name].localised_name = {"item-name." .. spidertron_name}
+    if not create_alternate_items then
+        -- Stops item name becoming "Rocket Launcher Spidertron"
+        data.raw["item-with-entity-data"][spidertron_name].localised_name = {"entity-name." .. spidertron_name}
+    end
 
     return names
 end
+
+-- This icon system heavily reduces the flexibility of the system, so if future updates add different weapon cycles, it will need to be changed
+spidertron_icons = {"submachine-gun", "combat-shotgun", "flamethrower", "rocket-launcher", "artillery-wagon-cannon"}
 
 local spidertron_names = create_variations("spidertron", {"spidertron-machine-gun", "spidertron-shotgun", "spidertron-flamethrower", "", "spidertron-cannon"})
 log(serpent.block(spidertron_names))

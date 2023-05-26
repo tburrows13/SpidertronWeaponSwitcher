@@ -1,6 +1,8 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.2.12
 Date: 26 May 2023
+  Changes:
+    - Replaced weapon names with icons in spidertron names
   Bugfixes:
     - Fixed crash with Freight Forwarding or when "Remove military science requirement" mod setting from Spidertron Patrols is enabled
 ---------------------------------------------------------------------------------------------------
