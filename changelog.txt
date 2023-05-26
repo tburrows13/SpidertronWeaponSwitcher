@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.2.12
+Date: 26 May 2023
+  Bugfixes:
+    - Fixed crash with Freight Forwarding or when "Remove military science requirement" mod setting from Spidertron Patrols is enabled
+---------------------------------------------------------------------------------------------------
 Version: 1.2.11
 Date: 17 November 2022
   Bugfixes:

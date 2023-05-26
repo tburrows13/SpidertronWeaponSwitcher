@@ -95,7 +95,7 @@ script.on_event("switch-spidertron-weapons",
     end
 
     local next_name = get_next_name(spidertron.name)
-    if next_name then
+    if next_name and game.entity_prototypes[next_name] then
       --log("Switching from " .. spidertron.name .. " to " .. next_name)
       local saved_data = spidertron_lib.serialise_spidertron(spidertron)
 
